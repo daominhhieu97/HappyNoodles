@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "DuZlrbR9BQ3B6zdu+qgdbjJMAX5ekZsyvQ80fKI57Is=",
+  "Source": "HappyNoodles.Customers.WebApi",
+  "BasePath": "_content/HappyNoodles.Customers.WebApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
