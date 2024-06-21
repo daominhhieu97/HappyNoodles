@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-[Controller]
+
+[ApiController]
+[Route("api/[controller]")]
 public class HomeController : ControllerBase {
     public async Task<IActionResult> Index() {
         return Ok("hello");

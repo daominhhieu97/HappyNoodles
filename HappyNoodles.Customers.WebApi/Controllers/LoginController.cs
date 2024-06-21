@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
 
-[Controller]
+[ApiController]
+[Route("api/[controller]")]
 public class LoginController : ControllerBase
 {    
     [Route("signin")]
