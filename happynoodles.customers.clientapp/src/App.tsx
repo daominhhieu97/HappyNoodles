@@ -1,23 +1,15 @@
-// src/App.tsx
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { Login } from './Pages/Login';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Home } from './Pages/Home';
-import { applyMiddleware, createStore } from '@reduxjs/toolkit';
-import thunk from 'redux-thunk';
-import authReducer from './reducer';
-import { Provider } from 'react-redux';
+import GoogleLoginButton from './components/GoogleLoginButton';
 
-export function App() {
-    const store = createStore(authReducer, applyMiddleware(thunk));
-
+export default function App() {
     return (
-      <Provider store={store}> 
-        <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/home" element={<Home />} />
-        </Routes>
-      </Provider>
-      
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<GoogleLoginButton />} />
+            </Routes>
+        </BrowserRouter>
     );
-}
+};
