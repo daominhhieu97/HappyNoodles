@@ -16,8 +16,8 @@ builder.Services.AddAuthentication(options => {
     options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
     options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
 });
-
 builder.Services.AddControllers();
+builder.Services.AddSingleton<AppConfig>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -27,8 +27,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapControllerRoute("Default", "api/{controller=Home}/{action=Index}/{id?}");
-
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllerRoute("Default", "api/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

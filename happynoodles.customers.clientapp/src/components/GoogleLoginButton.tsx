@@ -1,24 +1,41 @@
-import React from 'react';
+// components/GoogleLoginButton.tsx
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { loginFailure, loginStart, loginSuccess } from '../store/authSlice.tsx';
-import axios from 'axios';
+import { login } from '../store/userSlice.tsx';
+import { jwtDecode } from 'jwt-decode';
 
-export default function GoogleLoginButton()  {
+const GoogleLoginButton: React.FC = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
-    const handleGoogleLogin = async () => {
-        dispatch(loginStart());
-        try {
-            const response = await axios.post('https://localhost:7232/api/login/signin'); // Your backend endpoint
-            console.log(response);
-            dispatch(loginSuccess(response.data));
-            navigate('/'); // Navigate to home page
-        } catch (error) {
-            dispatch(loginFailure('Google login failed.'));
-        }
+    const handleGoogleLogin = () => {
+        // Redirect to your backend's Google authentication endpoint
+        window.location.href = 'https://localhost:7232/api/login/signin';
     };
+
+    const handleLoginResponse = (token: string) => {
+        const decodedToken: any = jwtDecode(token);
+        const user = {
+            isAuthenticated : true,
+            email: decodedToken.email,
+            name: decodedToken.name
+        };
+        console.log(user)
+        dispatch(login(user)); // Dispatch login action to Redux store
+        navigate('/'); // Navigate to the home page
+    };
+
+    useEffect(() => {
+        console.log(window.location.search)
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        if (token) {
+            handleLoginResponse(token);
+        }
+    }, []);
 
     return <button onClick={handleGoogleLogin}>Login with Google</button>;
 };
+
+export default GoogleLoginButton;
