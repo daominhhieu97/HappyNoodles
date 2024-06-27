@@ -6,8 +6,8 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 [ApiController]
@@ -31,26 +31,28 @@ public class LoginController : ControllerBase
     [HttpGet("google-response")]
     public async Task<IActionResult> GoogleResponse()
     {
-        var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        var authenticateResult = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
         if (!authenticateResult.Succeeded)
-            return BadRequest();
+            return Unauthorized();
 
         var claims = authenticateResult.Principal.Identities.FirstOrDefault().Claims;
         var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-        var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+        //var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
 
         // Create JWT token
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_appConfig.JwtSecretKey); // Ensure to use a secure key
+        var key = Encoding.UTF8.GetBytes(_appConfig.JwtSecretKey); // Ensure to use a secure key
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[] 
             { 
-                new Claim(ClaimTypes.Email, email),
-                new Claim(ClaimTypes.Name, name)
+                new Claim(ClaimTypes.Email, email)
+                //new Claim(ClaimTypes.Name, name)
             }),
             Expires = DateTime.UtcNow.AddHours(1),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+            Audience = _appConfig.JwtAudience,
+            Issuer = _appConfig.JwtIssuer,
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         var tokenString = tokenHandler.WriteToken(token);

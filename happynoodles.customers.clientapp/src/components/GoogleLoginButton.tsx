@@ -14,9 +14,10 @@ const GoogleLoginButton: React.FC = () => {
         window.location.href = 'https://localhost:7232/api/login/signin';
     };
 
-    const handleLoginResponse = (token: string) => {
-        const decodedToken: any = jwtDecode(token);
+    const handleLoginResponse = (jwtToken: string) => {
+        const decodedToken: any = jwtDecode(jwtToken);
         const user = {
+            token: jwtToken,
             isAuthenticated : true,
             email: decodedToken.email,
             name: decodedToken.name

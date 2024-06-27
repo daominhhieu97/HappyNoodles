@@ -1,5 +1,7 @@
 public class AppConfig
 {
+    public string JwtIssuer => _configuration["Jwt:Issuer"];
+    public string JwtAudience => _configuration["Jwt:Audience"];
     private readonly IConfiguration _configuration;
 
     public AppConfig(IConfiguration configuration)
