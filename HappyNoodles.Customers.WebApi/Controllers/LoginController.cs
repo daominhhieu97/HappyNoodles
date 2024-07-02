@@ -9,16 +9,21 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using HappyNoodles.Services;
 
 [ApiController]
 [Route("api/[controller]")]
 public class LoginController : ControllerBase
 {    
     private readonly AppConfig _appConfig;
+    private readonly ILoginService _loginService;
 
-    public LoginController(AppConfig appConfig)
+    public LoginController(
+        AppConfig appConfig,
+        ILoginService loginService)
     {
         _appConfig = appConfig;
+        _loginService = loginService;
     }
 
     [Route("signin")]
@@ -37,7 +42,7 @@ public class LoginController : ControllerBase
 
         var claims = authenticateResult.Principal.Identities.FirstOrDefault().Claims;
         var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-        //var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+        var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
 
         // Create JWT token
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -46,8 +51,8 @@ public class LoginController : ControllerBase
         {
             Subject = new ClaimsIdentity(new[] 
             { 
-                new Claim(ClaimTypes.Email, email)
-                //new Claim(ClaimTypes.Name, name)
+                new Claim(ClaimTypes.Email, email),
+                new Claim(ClaimTypes.Name, name)
             }),
             Expires = DateTime.UtcNow.AddHours(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
@@ -57,6 +62,8 @@ public class LoginController : ControllerBase
         var token = tokenHandler.CreateToken(tokenDescriptor);
         var tokenString = tokenHandler.WriteToken(token);
 
-        return Redirect($"{_appConfig.FrontEndUrl}/?token={tokenString}");
+        var IsRegistered = _loginService.IsRegistered(email);
+
+        return Redirect($"{_appConfig.FrontEndUrl}/?token={tokenString}&isRegister={IsRegistered}");
     }
 }

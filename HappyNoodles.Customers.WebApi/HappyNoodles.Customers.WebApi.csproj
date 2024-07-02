@@ -14,4 +14,8 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HappyNoodles.Services\HappyNoodles.Services.csproj" />
+  </ItemGroup>
+
 </Project>
