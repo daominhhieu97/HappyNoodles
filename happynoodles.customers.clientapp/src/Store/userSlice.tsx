@@ -3,14 +3,20 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface UserState {
     token: string;
-    email: string;
-    name: string;
     isAuthenticated: boolean;
+    user : User;
+}
+
+interface User {
+    email: string;
+    name : string;
 }
 
 const initialState: UserState = {
-    email: '',
-    name: '',
+    user : {
+        email: '',
+        name: ''
+    },
     isAuthenticated: false,
     token: ''
 };
@@ -22,13 +28,15 @@ const userSlice = createSlice({
         login(state, action: PayloadAction<UserState>) {
             state.token = action.payload.token;
             state.isAuthenticated = true;
-            state.email = action.payload.email;
-            state.name = action.payload.name;
+            state.user.email = action.payload.user.email;
+            state.user.name = action.payload.user.name;
         },
         logout(state) {
             state.isAuthenticated = false;
-            state.email = '';
-            state.name = '';
+            state.user = {
+                email: '',
+                name: ''
+            };
             state.token = '';
         }
     }

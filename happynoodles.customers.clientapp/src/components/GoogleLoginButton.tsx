@@ -19,10 +19,11 @@ const GoogleLoginButton: React.FC = () => {
         const user = {
             token: jwtToken,
             isAuthenticated : true,
-            email: decodedToken.email,
-            name: decodedToken.name
+            user : {
+                email: decodedToken.email,
+                name: decodedToken.unique_name
+            }
         };
-        console.log(user)
         dispatch(login(user)); // Dispatch login action to Redux store
         navigate('/'); // Navigate to the home page
     };

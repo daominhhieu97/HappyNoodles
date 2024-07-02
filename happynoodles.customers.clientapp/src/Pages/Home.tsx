@@ -3,18 +3,18 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import GoogleLoginButton from '../components/GoogleLoginButton.tsx';
 import fetchFoods from '../apis/foodApi.tsx';
+import Logout from '../components/logout.tsx';
 
 export const Home: React.FC = () => {
-    const user = useSelector((state: RootState) => state.user); // Replace 'state.user' with your actual slice where user information is stored
+    const userState = useSelector((state: RootState) => state.user); // Replace 'state.user' with your actual slice where user information is stored
     const [foods, setFoods] = useState<string>(''); // State to hold fetched foods
     
     useEffect(() => {
         // Fetch foods when user is authenticated
-        if (user.isAuthenticated) {
+        if (userState.isAuthenticated) {
             const fetchFoodsData = async () => {
                 try {
                     const fetchedFoods = await fetchFoods();
-                    console.log('da authentication')
                     setFoods(fetchedFoods);
                 } catch (error) {
                     console.error('Error fetching foods:', error);
@@ -23,9 +23,9 @@ export const Home: React.FC = () => {
             };
             fetchFoodsData();
         }
-    }, [user.isAuthenticated]);
+    }, [userState.isAuthenticated]);
     
-    if(!user.isAuthenticated)
+    if(!userState.isAuthenticated)
     {
         return (<div>
             <p>Welcome to Happy Noodles</p>
@@ -34,10 +34,10 @@ export const Home: React.FC = () => {
     }
     return (
         <div>
-            <h1>Welcome, {user.name}</h1>
-            <p>Email: {user.email}</p>
+            <h1>Welcome, {userState.user.name}</h1>
+            <p>Email: {userState.user.email}</p>
             {/* Render other user information */}
-            
+            <Logout />
             <h2>Available Foods:</h2>
             <ul>
                 {foods}
