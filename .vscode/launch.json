@@ -27,9 +27,14 @@
             }
         },
         {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach"
-        }
+            "name": "React Front End App",
+            "type": "msedge",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/happynoodles.customers.clientapp/src",
+            "sourceMapPathOverrides": {
+              "webpack:///src/*": "${webRoot}/*"
+            }
+          }
     ]
 }
