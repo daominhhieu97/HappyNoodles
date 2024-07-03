@@ -48,9 +48,7 @@ builder.Services.AddCors(options =>
                 });
         });
 builder.Services.AddDbContext<HappyNoodlesContext>(options =>
-        options.UseNpgsql(configurations["DatabaseConnection:ConnectionString"], options => {
-            options.MigrationsAssembly("HappyNoodles.Services");
-        }));
+        options.UseNpgsql(configurations["DatabaseConnection:ConnectionString"]));
 builder.Services.AddScoped<ILoginService, LoginService>();
 var app = builder.Build();
 

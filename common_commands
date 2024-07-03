@@ -1,0 +1,2 @@
+UpdateDb: dotnet ef database update --startup-project ../HappyNoodles.Customers.WebApi
+Create Migration: dotnet ef migrations add 1_Init --startup-project ../HappyNoodles.Customers.WebApi

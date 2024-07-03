@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HappyNoodles.Services.Migrations
 {
     [DbContext(typeof(HappyNoodlesContext))]
-    [Migration("20240703100838_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240703110554_1_Init")]
+    partial class _1_Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,7 +31,6 @@ namespace HappyNoodles.Services.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -39,7 +38,6 @@ namespace HappyNoodles.Services.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");

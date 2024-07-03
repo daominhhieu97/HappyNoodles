@@ -1,5 +1,6 @@
 
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using HappyNoodles.Models;
 using HappyNoodles.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ namespace HappyNoodles.Services.Services
             _happyNoodlesContext = happyNoodlesContext;
         }
         public async Task<bool> IsRegistered(string email)
-        {
+        {            
             var isExistingUser = await _happyNoodlesContext.Users.AnyAsync(x => 
                 x.Email.Equals(email) 
                 && !string.IsNullOrEmpty(x.Address) 
