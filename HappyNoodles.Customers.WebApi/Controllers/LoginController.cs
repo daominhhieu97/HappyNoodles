@@ -1,20 +1,16 @@
-using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using HappyNoodles.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using HappyNoodles.Services;
 
 [ApiController]
 [Route("api/[controller]")]
 public class LoginController : ControllerBase
-{    
+{
     private readonly AppConfig _appConfig;
     private readonly ILoginService _loginService;
 
