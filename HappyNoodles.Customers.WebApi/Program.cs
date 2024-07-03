@@ -1,11 +1,14 @@
 using System.Text;
+using HappyNoodles.Services.Interfaces;
+using HappyNoodles.Services.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var configurations = builder.Configuration;
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -17,8 +20,8 @@ builder.Services.AddAuthentication(options => {
 })
 .AddCookie()
 .AddGoogle(GoogleDefaults.AuthenticationScheme, options => {
-    options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
-    options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+    options.ClientId = configurations.GetSection("GoogleKeys:ClientId").Value;
+    options.ClientSecret = configurations.GetSection("GoogleKeys:ClientSecret").Value;
 }).AddJwtBearer(options =>
     {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -27,9 +30,9 @@ builder.Services.AddAuthentication(options => {
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]))
+        ValidIssuer = configurations["Jwt:Issuer"],
+        ValidAudience = configurations["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configurations["Jwt:SecretKey"]))
     };
     });
 builder.Services.AddControllers();
@@ -44,6 +47,11 @@ builder.Services.AddCors(options =>
                            .AllowAnyMethod();
                 });
         });
+builder.Services.AddDbContext<HappyNoodlesContext>(options =>
+        options.UseNpgsql(configurations["DatabaseConnection:ConnectionString"], options => {
+            options.MigrationsAssembly("HappyNoodles.Services");
+        }));
+builder.Services.AddScoped<ILoginService, LoginService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
