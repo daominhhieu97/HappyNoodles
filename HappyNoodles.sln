@@ -5,6 +5,12 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyNoodles.Customers.WebApi", "HappyNoodles.Customers.WebApi\HappyNoodles.Customers.WebApi.csproj", "{4F83DD71-E779-4A5A-B972-8810759CBBE0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HappyNoodles.Services", "HappyNoodles.Services\HappyNoodles.Services.csproj", "{7AEB8560-8752-475E-BEF6-EA3ACA0835A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HappyNoodles.Models", "HappyNoodles.Models\HappyNoodles.Models.csproj", "{B8156C3D-3C14-41BA-9A08-189EE930A191}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HappyNoodles.DTOs", "HappyNoodles.DTOs\HappyNoodles.DTOs.csproj", "{970C2C1B-74B7-4653-A67A-E3DF8DBCC91C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,18 @@ Global
 		{4F83DD71-E779-4A5A-B972-8810759CBBE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F83DD71-E779-4A5A-B972-8810759CBBE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F83DD71-E779-4A5A-B972-8810759CBBE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AEB8560-8752-475E-BEF6-EA3ACA0835A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AEB8560-8752-475E-BEF6-EA3ACA0835A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AEB8560-8752-475E-BEF6-EA3ACA0835A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AEB8560-8752-475E-BEF6-EA3ACA0835A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8156C3D-3C14-41BA-9A08-189EE930A191}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8156C3D-3C14-41BA-9A08-189EE930A191}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8156C3D-3C14-41BA-9A08-189EE930A191}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8156C3D-3C14-41BA-9A08-189EE930A191}.Release|Any CPU.Build.0 = Release|Any CPU
+		{970C2C1B-74B7-4653-A67A-E3DF8DBCC91C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{970C2C1B-74B7-4653-A67A-E3DF8DBCC91C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{970C2C1B-74B7-4653-A67A-E3DF8DBCC91C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{970C2C1B-74B7-4653-A67A-E3DF8DBCC91C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

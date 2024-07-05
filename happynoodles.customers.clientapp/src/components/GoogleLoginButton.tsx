@@ -14,26 +14,37 @@ const GoogleLoginButton: React.FC = () => {
         window.location.href = 'https://localhost:7232/api/login/signin';
     };
 
-    const handleLoginResponse = (jwtToken: string) => {
+    const handleLoginResponse = (jwtToken: string, userId: string | null) => {
         const decodedToken: any = jwtDecode(jwtToken);
         const user = {
             token: jwtToken,
             isAuthenticated : true,
             user : {
                 email: decodedToken.email,
-                name: decodedToken.unique_name
+                name: decodedToken.unique_name,
+                id: userId
             }
         };
         dispatch(login(user)); // Dispatch login action to Redux store
-        navigate('/'); // Navigate to the home page
     };
 
     useEffect(() => {
         console.log(window.location.search)
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
+        const isRegistered = urlParams.get('isRegistered') === 'true';
+        const userId = urlParams.get('userId');
+
         if (token) {
-            handleLoginResponse(token);
+            handleLoginResponse(token, userId);
+            
+            if(!isRegistered)
+                {
+                    navigate('/register')
+                }
+                else{
+                    navigate('/')
+                }
         }
     }, []);
 

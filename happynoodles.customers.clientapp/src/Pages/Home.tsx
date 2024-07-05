@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
+import { RootState } from '../store/store.tsx';
 import GoogleLoginButton from '../components/GoogleLoginButton.tsx';
 import fetchFoods from '../apis/foodApi.tsx';
 import Logout from '../components/logout.tsx';

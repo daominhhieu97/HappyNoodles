@@ -1,0 +1,10 @@
+###EF Core commands
+Create Migration: dotnet ef migrations add 1_Init --startup-project ../HappyNoodles.Customers.WebApi
+UpdateDb: dotnet ef database update --startup-project ../HappyNoodles.Customers.WebApi
+
+.NET Solution
+New ClassLib proj: dotnet new classlib -n HappyNoodles.DTOs
+Add proj to solution: dotnet sln HappyNoodles.sln add HappyNoodles.DTOs/HappyNoodles.DTOs.csproj
+
+NPM
+Install: npm install formik yup
