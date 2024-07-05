@@ -36,20 +36,25 @@ public class LoginController : ControllerBase
         if (!authenticateResult.Succeeded)
             return Unauthorized();
 
-        var claims = authenticateResult.Principal.Identities.FirstOrDefault().Claims;
-        var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-        var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+        var claims = authenticateResult?.Principal?.Identities?.FirstOrDefault()?.Claims;
+        if(claims == null)
+        {
+            return Unauthorized();
+        }
+        
+        var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? string.Empty;
+        var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? string.Empty;
 
         // Create JWT token
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_appConfig.JwtSecretKey); // Ensure to use a secure key
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] 
-            { 
+            Subject = new ClaimsIdentity(
+            [
                 new Claim(ClaimTypes.Email, email),
                 new Claim(ClaimTypes.Name, name)
-            }),
+            ]),
             Expires = DateTime.UtcNow.AddHours(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             Audience = _appConfig.JwtAudience,
@@ -60,6 +65,6 @@ public class LoginController : ControllerBase
 
         var IsRegistered = await _loginService.IsRegistered(email);
 
-        return Redirect($"{_appConfig.FrontEndUrl}/?token={tokenString}&isRegister={IsRegistered}");
+        return Redirect($"{_appConfig.FrontEndUrl}/?token={tokenString}&isRegistered={IsRegistered.isRegistered.ToString().ToLowerInvariant()}&userId={IsRegistered.userId}");
     }
 }

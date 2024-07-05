@@ -50,6 +50,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<HappyNoodlesContext>(options =>
         options.UseNpgsql(configurations["DatabaseConnection:ConnectionString"]));
 builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IUserService, UserService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

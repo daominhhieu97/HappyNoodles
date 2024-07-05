@@ -1,6 +1,3 @@
-
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using HappyNoodles.Models;
 using HappyNoodles.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -13,23 +10,28 @@ namespace HappyNoodles.Services.Services
         {
             _happyNoodlesContext = happyNoodlesContext;
         }
-        public async Task<bool> IsRegistered(string email)
+        public async Task<(bool isRegistered, Guid userId)> IsRegistered(string email)
         {            
-            var isExistingUser = await _happyNoodlesContext.Users.AnyAsync(x => 
-                x.Email.Equals(email) 
-                && !string.IsNullOrEmpty(x.Address) 
-                && !string.IsNullOrEmpty(x.PhoneNumber));
+            var isExistingUser = await _happyNoodlesContext.Users.SingleOrDefaultAsync(x => 
+                x.Email.Equals(email));
 
-            if (!isExistingUser)
+            if (isExistingUser == null)
             {
-                _happyNoodlesContext.Users.Add(new User(){
+                var newUser = new User{
                     Email = email
-                });
+                };
+                _happyNoodlesContext.Users.Add(newUser);
+
                 await _happyNoodlesContext.SaveChangesAsync();
-                return false;
+                return (false, newUser.Id);
             }
 
-            return true;
+            if(string.IsNullOrEmpty(isExistingUser.Address) && string.IsNullOrEmpty(isExistingUser.PhoneNumber))
+            {
+                return (false, isExistingUser.Id);
+            }
+
+            return (true,isExistingUser.Id);
 
         }
     }

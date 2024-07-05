@@ -10,12 +10,14 @@ interface UserState {
 interface User {
     email: string;
     name : string;
+    id: string | null;
 }
 
 const initialState: UserState = {
     user : {
         email: '',
-        name: ''
+        name: '',
+        id : null
     },
     isAuthenticated: false,
     token: ''
@@ -30,12 +32,14 @@ const userSlice = createSlice({
             state.isAuthenticated = true;
             state.user.email = action.payload.user.email;
             state.user.name = action.payload.user.name;
+            state.user.id = action.payload.user.id;
         },
         logout(state) {
             state.isAuthenticated = false;
             state.user = {
                 email: '',
-                name: ''
+                name: '',
+                id : null
             };
             state.token = '';
         }

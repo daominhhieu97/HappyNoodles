@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HappyNoodles.Services\HappyNoodles.Services.csproj" />
+    <ProjectReference Include="..\HappyNoodles.DTOs\HappyNoodles.DTOs.csproj" />
   </ItemGroup>
 
 </Project>

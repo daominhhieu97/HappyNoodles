@@ -2,6 +2,6 @@
 {
     public interface ILoginService
     {
-        Task<bool> IsRegistered(string email);
+        Task<(bool isRegistered, Guid userId)> IsRegistered(string email);
     }
 }
