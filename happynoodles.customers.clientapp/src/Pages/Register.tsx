@@ -5,6 +5,7 @@ import register from "../apis/userApi.tsx";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store.tsx";
 import { useNavigate } from "react-router-dom";
+import { TextField, Button, Box } from '@mui/material';
 
 interface RegisterFormValues {
     address: string;
@@ -45,25 +46,45 @@ export const Register: React.FC = () => {
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
         >
-            {({ isSubmitting }) => (
+            {({ isSubmitting, handleChange, handleBlur, values }) => (
                 <Form>
-                    <div>
-                        <label htmlFor="address">Address</label>
-                        <Field type="text" id="address" name="address" />
-                        <ErrorMessage name="address" component="div" />
-                    </div>
-                    <div>
-                        <label htmlFor="phoneNumber">Phone Number</label>
-                        <Field type="text" id="phoneNumber" name="phoneNumber" />
-                        <ErrorMessage name="phoneNumber" component="div" />
-                    </div>
-                    <button type="submit" disabled={isSubmitting}>
+                    <Box mb={2}>
+                        <TextField
+                            fullWidth
+                            id="address"
+                            name="address"
+                            label="Address"
+                            value={values.address}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            helperText={<ErrorMessage name="address" />}
+                            error={Boolean(values.address && <ErrorMessage name="address" />)}
+                        />
+                    </Box>
+                    <Box mb={2}>
+                        <TextField
+                            fullWidth
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            label="Phone Number"
+                            value={values.phoneNumber}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            helperText={<ErrorMessage name="phoneNumber" />}
+                            error={Boolean(values.phoneNumber && <ErrorMessage name="phoneNumber" />)}
+                        />
+                    </Box>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={isSubmitting}
+                    >
                         Submit
-                    </button>
+                    </Button>
                 </Form>
             )}
         </Formik>
-
     );
 }
 
