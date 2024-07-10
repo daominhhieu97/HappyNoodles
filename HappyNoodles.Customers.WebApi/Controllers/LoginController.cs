@@ -13,13 +13,16 @@ public class LoginController : ControllerBase
 {
     private readonly AppConfig _appConfig;
     private readonly ILoginService _loginService;
+    private readonly IUserService _userService;
 
     public LoginController(
         AppConfig appConfig,
-        ILoginService loginService)
+        ILoginService loginService,
+        IUserService userService)
     {
         _appConfig = appConfig;
         _loginService = loginService;
+        _userService = userService;
     }
 
     [Route("signin")]
@@ -64,6 +67,7 @@ public class LoginController : ControllerBase
         var tokenString = tokenHandler.WriteToken(token);
 
         var IsRegistered = await _loginService.IsRegistered(email);
+        var userDto = await _userService.GetUserAsync(email);
 
         return Redirect($"{_appConfig.FrontEndUrl}/?token={tokenString}&isRegistered={IsRegistered.isRegistered.ToString().ToLowerInvariant()}&userId={IsRegistered.userId}");
     }

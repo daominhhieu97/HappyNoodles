@@ -1,4 +1,6 @@
 using System.Text;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using HappyNoodles.Services.Interfaces;
 using HappyNoodles.Services.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -36,6 +38,11 @@ builder.Services.AddAuthentication(options => {
     };
     });
 builder.Services.AddControllers();
+
+//Add fluent validation service
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
+
 builder.Services.AddSingleton<AppConfig>();
 builder.Services.AddCors(options =>
         {
