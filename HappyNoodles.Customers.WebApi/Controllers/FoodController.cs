@@ -15,6 +15,7 @@ namespace HappyNoodles.Customers.WebApi.Controllers
         {
             // Example secure resource
             var user = User.Identity?.Name ?? "Unknown";
+            
             return Ok($"Hello, {user}! this is food");
         }
     }

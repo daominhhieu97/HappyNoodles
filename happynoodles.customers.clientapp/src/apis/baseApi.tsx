@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { store } from '../store/store.tsx';
+import { toast } from 'react-toastify';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://localhost:7232/api', // Adjust base URL as per your backend
+  baseURL: process.env.REACT_APP_API_BASE_URL,
 });
 
 // Add a request interceptor
@@ -16,6 +17,18 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
+  }
+);
+
+// Add a response interceptor
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+      debugger
+      toast.error(`${error.response.data}`);
+      return Promise.reject(error);
   }
 );
 
