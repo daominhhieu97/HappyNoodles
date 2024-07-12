@@ -14,7 +14,7 @@ const GoogleLoginButton: React.FC = () => {
         window.location.href =  `${process.env.REACT_APP_API_BASE_URL}/login/signin`
     };
 
-    const handleLoginResponse = (jwtToken: string, userId: string | null) => {
+    const handleLoginResponse = (jwtToken: string, userId: string) => {
         const decodedToken: any = jwtDecode(jwtToken);
         const user = {
             token: jwtToken,
@@ -32,7 +32,7 @@ const GoogleLoginButton: React.FC = () => {
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
         const isRegistered = urlParams.get('isRegistered') === 'true';
-        const userId = urlParams.get('userId');
+        const userId = urlParams.get('userId')!;
 
         if (token) {
             handleLoginResponse(token, userId);

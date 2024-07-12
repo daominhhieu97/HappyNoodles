@@ -18,9 +18,9 @@ namespace HappyNoodles.Services.Services
             _mapper = mapper;
         }
 
-        public async Task<UserDto> GetUserAsync(string email)
+        public async Task<UserDto> GetUserAsync(Guid userId)
         {
-            var user = await _happyNoodlesContext.Users.FirstOrDefaultAsync(x => x.Email.Equals(email));
+            var user = await _happyNoodlesContext.Users.SingleOrDefaultAsync(x => x.Id == userId);
             var dto = _mapper.Map<UserDto>(user);
             return dto;
         }

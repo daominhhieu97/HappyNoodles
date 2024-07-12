@@ -31,5 +31,11 @@ namespace HappyNoodles.Customers.WebApi.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpGet("details")]
+        public async Task<IActionResult> GetUserDetails(Guid userId)
+        {
+            return Ok(await userService.GetUserAsync(userId));
+        }
     }
 }
