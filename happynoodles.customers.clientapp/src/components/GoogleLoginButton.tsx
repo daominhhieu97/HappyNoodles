@@ -11,7 +11,7 @@ const GoogleLoginButton: React.FC = () => {
 
     const handleGoogleLogin = () => {
         // Redirect to your backend's Google authentication endpoint
-        window.location.href = 'https://localhost:7232/api/login/signin';
+        window.location.href =  `${process.env.REACT_APP_API_BASE_URL}/login/signin`
     };
 
     const handleLoginResponse = (jwtToken: string, userId: string | null) => {
@@ -29,7 +29,6 @@ const GoogleLoginButton: React.FC = () => {
     };
 
     useEffect(() => {
-        console.log(window.location.search)
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
         const isRegistered = urlParams.get('isRegistered') === 'true';
