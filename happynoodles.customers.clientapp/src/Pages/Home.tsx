@@ -4,39 +4,70 @@ import { RootState } from '../store/store.tsx';
 import GoogleLoginButton from '../components/GoogleLoginButton.tsx';
 import fetchFoods from '../apis/foodApi.tsx';
 import Logout from '../components/logout.tsx';
+import { Avatar, IconButton, Typography } from '@mui/material';
+import CommonModal from '../components/commonModal.tsx';
+import UserDto from '../models/user.tsx';
+import { getUserDetails } from '../apis/userApi.tsx';
 
 export const Home: React.FC = () => {
-    const userState = useSelector((state: RootState) => state.user); // Replace 'state.user' with your actual slice where user information is stored
-    const [foods, setFoods] = useState<string>(''); // State to hold fetched foods
-    
+    const userState = useSelector((state: RootState) => state.user); 
+    const [foods, setFoods] = useState<string>('');
+    const [user, setUser] = useState<UserDto>();
+    const [doUserInfoModalOpen, setUserInfoModalOpen] = useState(false);
+    const handleUserInfoModalClose = () => setUserInfoModalOpen(false);
+
+    const fetchFoodsData = async () => {
+        const fetchedFoods = await fetchFoods();
+        setFoods(fetchedFoods);
+    };
+
     useEffect(() => {
-        // Fetch foods when user is authenticated
-        if (userState.isAuthenticated) {
-            const fetchFoodsData = async () => {
-                try {
-                    const fetchedFoods = await fetchFoods();
-                    setFoods(fetchedFoods);
-                } catch (error) {
-                    console.error('Error fetching foods:', error);
-                    // Handle error as needed
-                }
-            };
-            fetchFoodsData();
+        const initState = async () => {
+            if (userState.isAuthenticated) {
+                fetchFoodsData();
+                setUser(await getUserDetails(userState.user.id))
+            }
         }
+        initState();
+       
     }, [userState.isAuthenticated]);
-    
-    if(!userState.isAuthenticated)
-    {
+
+    if (!userState.isAuthenticated) {
         return (<div>
             <p>Welcome to Happy Noodles</p>
             <GoogleLoginButton />
         </div>)
     }
+
+    const getAvatarDisplayName = (username : string) => {
+        return username
+        .split(' ')
+        .map(name => name[0])
+        .join('');
+    } 
+
     return (
         <div>
-            <h1>Welcome, {userState.user.name}</h1>
-            <p>Email: {userState.user.email}</p>
-            {/* Render other user information */}
+            <div>
+                <IconButton onClick={() => setUserInfoModalOpen(true)}>
+                    <Avatar>{getAvatarDisplayName(userState.user.name)}</Avatar>
+                </IconButton>
+                <CommonModal open={doUserInfoModalOpen} handleClose={handleUserInfoModalClose} title="THÔNG TIN CÁ NHÂN">
+                    <Typography sx={{ mt: 2 }}>
+                        Username: {userState.user.name}
+                    </Typography>
+                    <Typography sx={{ mt: 2 }}>
+                        Email: {userState.user.email}
+                    </Typography>
+                    <Typography sx={{ mt: 2 }}>
+                        Phone Number: {user?.phoneNumber}
+                    </Typography>
+                    <Typography sx={{ mt: 2 }}>
+                        Address: {user?.address}
+                    </Typography>
+                </CommonModal>
+            </div>
+            
             <Logout />
             <h2>Available Foods:</h2>
             <ul>

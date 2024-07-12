@@ -10,14 +10,14 @@ interface UserState {
 interface User {
     email: string;
     name : string;
-    id: string | null;
+    id: string;
 }
 
 const initialState: UserState = {
     user : {
         email: '',
         name: '',
-        id : null
+        id : ''
     },
     isAuthenticated: false,
     token: ''
@@ -39,7 +39,7 @@ const userSlice = createSlice({
             state.user = {
                 email: '',
                 name: '',
-                id : null
+                id : ''
             };
             state.token = '';
         }

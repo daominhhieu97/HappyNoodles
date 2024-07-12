@@ -4,7 +4,7 @@ namespace HappyNoodles.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<UserDto> GetUserAsync(string email);
+        Task<UserDto> GetUserAsync(Guid userId);
         Task Register(RegisterUserRequest request);
     }
 }
