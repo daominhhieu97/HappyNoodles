@@ -63,7 +63,7 @@ public class LoginController : ControllerBase
         var token = tokenHandler.CreateToken(tokenDescriptor);
         var tokenString = tokenHandler.WriteToken(token);
 
-        var IsRegistered = await _loginService.IsRegistered(email);
+        var IsRegistered = await _loginService.IsRegistered(email, name);
 
         return Redirect($"{_appConfig.FrontEndUrl}/?token={tokenString}&isRegistered={IsRegistered.isRegistered.ToString().ToLowerInvariant()}&userId={IsRegistered.userId}");
     }
