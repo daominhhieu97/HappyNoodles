@@ -10,16 +10,15 @@ namespace HappyNoodles.Services.Services
         {
             _happyNoodlesContext = happyNoodlesContext;
         }
-        public async Task<(bool isRegistered, Guid userId)> IsRegistered(string email, string username)
+        public async Task<(bool isRegistered, Guid userId)> IsRegistered(string email)
         {            
             var isExistingUser = await _happyNoodlesContext.Users.SingleOrDefaultAsync(x => 
-                x.Email.Equals(email) && x.Username.Equals(username));
+                x.Email.Equals(email));
 
             if (isExistingUser == null)
             {
                 var newUser = new User{
-                    Email = email,
-                    Username = username
+                    Email = email
                 };
                 _happyNoodlesContext.Users.Add(newUser);
 
