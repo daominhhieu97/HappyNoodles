@@ -6,5 +6,6 @@ namespace HappyNoodles.Services.Interfaces
     {
         Task<UserDto> GetUserAsync(Guid userId);
         Task Register(RegisterUserRequest request);
+        Task UpdateUserDetails(UpdateUserDetailsRequest request);
     }
 }

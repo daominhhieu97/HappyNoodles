@@ -4,16 +4,22 @@ import { RootState } from '../store/store.tsx';
 import GoogleLoginButton from '../components/GoogleLoginButton.tsx';
 import fetchFoods from '../apis/foodApi.tsx';
 import Logout from '../components/logout.tsx';
-import { Avatar, IconButton, Typography } from '@mui/material';
+import { Avatar, Button, IconButton, Typography } from '@mui/material';
 import CommonModal from '../components/commonModal.tsx';
 import UserDto from '../models/user.tsx';
-import { getUserDetails } from '../apis/userApi.tsx';
+import { getUserDetails, updateUserDetails } from '../apis/userApi.tsx';
+import EditableTextField from '../components/editableTextField.tsx';
+import { toast } from 'react-toastify';
+
 
 export const Home: React.FC = () => {
     const userState = useSelector((state: RootState) => state.user); 
     const [foods, setFoods] = useState<string>('');
     const [user, setUser] = useState<UserDto>();
     const [doUserInfoModalOpen, setUserInfoModalOpen] = useState(false);
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [address, setAddress] = useState('');
+    
     const handleUserInfoModalClose = () => setUserInfoModalOpen(false);
 
     const fetchFoodsData = async () => {
@@ -21,16 +27,38 @@ export const Home: React.FC = () => {
         setFoods(fetchedFoods);
     };
 
+    const handleSave = async () => {
+        if (user) {
+            debugger
+            await updateUserDetails({
+                id: user.id,
+                phoneNumber: phoneNumber,
+                address: address
+            })
+            handleUserInfoModalClose();
+            
+            toast('Your changes are saved')
+        }
+    };
+
     useEffect(() => {
         const initState = async () => {
             if (userState.isAuthenticated) {
                 fetchFoodsData();
                 setUser(await getUserDetails(userState.user.id))
+                setPhoneNumber(user?.phoneNumber || '')
+                setAddress(user?.address || '')
             }
         }
         initState();
        
     }, [userState.isAuthenticated]);
+
+    useEffect(() => {
+        setPhoneNumber(user?.phoneNumber || '')
+        setAddress(user?.address || '')
+       
+    }, [user]);
 
     if (!userState.isAuthenticated) {
         return (<div>
@@ -52,19 +80,24 @@ export const Home: React.FC = () => {
                 <IconButton onClick={() => setUserInfoModalOpen(true)}>
                     <Avatar>{getAvatarDisplayName(userState.user.name)}</Avatar>
                 </IconButton>
-                <CommonModal open={doUserInfoModalOpen} handleClose={handleUserInfoModalClose} title="THÔNG TIN CÁ NHÂN">
+                <CommonModal open={doUserInfoModalOpen} handleClose={handleUserInfoModalClose} title="USER INFORMATION">
                     <Typography sx={{ mt: 2 }}>
                         Username: {userState.user.name}
                     </Typography>
                     <Typography sx={{ mt: 2 }}>
                         Email: {userState.user.email}
                     </Typography>
-                    <Typography sx={{ mt: 2 }}>
-                        Phone Number: {user?.phoneNumber}
-                    </Typography>
-                    <Typography sx={{ mt: 2 }}>
-                        Address: {user?.address}
-                    </Typography>
+                    <EditableTextField
+                        label="Phone Number"
+                        defaultValue={phoneNumber || ''}
+                        onChange={setPhoneNumber}
+                    />
+                    <EditableTextField
+                        label="Address"
+                        defaultValue={address || ''}
+                        onChange={setAddress}
+                    />
+                    <Button sx={{ mt: 2 }} onClick={handleSave}>Save</Button>
                 </CommonModal>
             </div>
             
