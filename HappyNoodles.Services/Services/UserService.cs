@@ -39,5 +39,18 @@ namespace HappyNoodles.Services.Services
 
             await _happyNoodlesContext.SaveChangesAsync();
         }
+
+        public async Task UpdateUserDetails(UpdateUserDetailsRequest request)
+        {
+            var user = await _happyNoodlesContext.Users.FirstOrDefaultAsync(x => x.Id == request.Id);
+
+            if (user == null)
+                throw new Exception($"No any user with user id {request.Id}");
+
+            user.Address = request.Address;
+            user.PhoneNumber = request.PhoneNumber;
+
+            await _happyNoodlesContext.SaveChangesAsync();
+        }
     }
 }

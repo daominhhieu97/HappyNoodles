@@ -1,4 +1,4 @@
-import UserDto from "../models/user.tsx";
+import UserDto, { UpdateUserDetailsRequest } from "../models/user.tsx";
 import axiosInstance from "./baseApi.tsx";
 
 const baseUserApi = axiosInstance.defaults.baseURL + '/user';
@@ -23,6 +23,12 @@ export const getUserDetails = async (userId : string) : Promise<UserDto> => {
       userId
     },
   });
+
+  return response.data;
+};
+
+export const updateUserDetails = async (updateUserDetailsRequest: UpdateUserDetailsRequest) : Promise<void> => {
+  const response = await axiosInstance.patch(`${baseUserApi}/details`, updateUserDetailsRequest);
 
   return response.data;
 };

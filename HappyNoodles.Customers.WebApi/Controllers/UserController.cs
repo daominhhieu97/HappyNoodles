@@ -37,5 +37,19 @@ namespace HappyNoodles.Customers.WebApi.Controllers
         {
             return Ok(await userService.GetUserAsync(userId));
         }
+
+        [HttpPatch("details")]
+        public async Task<IActionResult> UpdateUserDetails([FromBody] UpdateUserDetailsRequest request)
+        {
+            try{
+                await userService.UpdateUserDetails(request);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
+            
+        }
     }
 }
