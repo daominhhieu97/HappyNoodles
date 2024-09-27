@@ -51,5 +51,12 @@ namespace HappyNoodles.Customers.WebApi.Controllers
             }
             
         }
+
+        [HttpPatch("{userId}/inactive")]
+        public async Task<IActionResult> Inactive(Guid userId)
+        {
+            await userService.InactiveUser(userId);
+            return Ok();
+        }
     }
 }

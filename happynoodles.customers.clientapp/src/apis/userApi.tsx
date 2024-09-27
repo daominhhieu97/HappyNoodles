@@ -33,4 +33,10 @@ export const updateUserDetails = async (updateUserDetailsRequest: UpdateUserDeta
   return response.data;
 };
 
+export const inactiveUser = async (userId : string) : Promise<void> => {
+  const response = await axiosInstance.patch(`${baseUserApi}/${userId}/inactive`);
+
+  return response.data;
+};
+
 export default register;

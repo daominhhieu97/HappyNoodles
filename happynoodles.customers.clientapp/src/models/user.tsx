@@ -4,6 +4,7 @@ interface UserDto {
     id: string;
     address: string;
     phoneNumber: string;
+    active: boolean;
 }
 
 export interface UpdateUserDetailsRequest{

@@ -7,7 +7,7 @@ import Logout from '../components/logout.tsx';
 import { Avatar, Button, IconButton, Typography } from '@mui/material';
 import CommonModal from '../components/commonModal.tsx';
 import UserDto from '../models/user.tsx';
-import { getUserDetails, updateUserDetails } from '../apis/userApi.tsx';
+import { getUserDetails, inactiveUser, updateUserDetails } from '../apis/userApi.tsx';
 import EditableTextField from '../components/editableTextField.tsx';
 import { toast } from 'react-toastify';
 
@@ -29,7 +29,6 @@ export const Home: React.FC = () => {
 
     const handleSave = async () => {
         if (user) {
-            debugger
             await updateUserDetails({
                 id: user.id,
                 phoneNumber: phoneNumber,
@@ -40,6 +39,15 @@ export const Home: React.FC = () => {
             toast('Your changes are saved')
         }
     };
+
+    const inactiveCustomer = async () => {
+        if(user)
+        {
+            await inactiveUser(user.id);
+            handleUserInfoModalClose();
+            toast("Inactive successfully. You cannot use this account next time.");
+        }
+    }
 
     useEffect(() => {
         const initState = async () => {
@@ -96,8 +104,9 @@ export const Home: React.FC = () => {
                         label="Address"
                         defaultValue={address || ''}
                         onChange={setAddress}
-                    />
+                    />                    
                     <Button sx={{ mt: 2 }} onClick={handleSave}>Save</Button>
+                    <Button sx={{ mt: 2 }} onClick={inactiveCustomer} color='error'>Inactive</Button>
                 </CommonModal>
             </div>
             
