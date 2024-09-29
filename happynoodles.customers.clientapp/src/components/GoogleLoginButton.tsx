@@ -2,15 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { login, initUserDetails } from '../store/userSlice.tsx';
+import { login } from '../store/userSlice.tsx';
 import { jwtDecode } from 'jwt-decode';
-import { getUserDetails } from '../apis/userApi.tsx';
 
 const GoogleLoginButton: React.FC = () => {
-    const [isLoggedIn, SetLogInStatus] = useState(false);
-    const [token, setToken] = useState('');
-    const [userId, setUserId] = useState('');
-    const [isRegistered, setRegistered] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -34,48 +29,29 @@ const GoogleLoginButton: React.FC = () => {
     };
 
     useEffect(() => {
-        debugger;
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
         const isRegistered = urlParams.get('isRegistered') === 'true';
+        const isActive = urlParams.get('isActive') === 'true';
         const userId = urlParams.get('userId')!;
 
-        if(token)
-        {
-            debugger
-            SetLogInStatus(true);
-            setToken(token);
-            setUserId(userId);
-            setRegistered(isRegistered);
-        }
-    }, []);
-
-    useEffect(() => {
-        let user;
-        const fetchData = async () => {
-            user = await getUserDetails(userId);
-        };
-      
-        fetchData();    
+        if (token) {
             handleLoginResponse(token, userId);
-
-            initUserDetails(user);
-            
-            if(user.active === false)
+            if (!isActive)
             {
                 navigate('/inactive')
                 return;
             }
-            
-            if(!isRegistered)
-                {
-                    navigate('/register')
-                }
-                else{
-                    navigate('/')
-                }
-        
-    }, [isLoggedIn]);
+                
+
+            if (!isRegistered) {
+                navigate('/register')
+            }
+            else {
+                navigate('/')
+            }
+        }
+    }, []);
 
     return <button onClick={handleGoogleLogin}>Login with Google</button>;
 };

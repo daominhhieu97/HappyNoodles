@@ -4,35 +4,39 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HappyNoodles.Services.Services
 {
-    public class LoginService : ILoginService{
+    public class LoginService : ILoginService
+    {
         private readonly HappyNoodlesContext _happyNoodlesContext;
         public LoginService(HappyNoodlesContext happyNoodlesContext)
         {
             _happyNoodlesContext = happyNoodlesContext;
         }
-        public async Task<(bool isRegistered, Guid userId)> IsRegistered(string email, string username)
-        {            
-            var isExistingUser = await _happyNoodlesContext.Users.SingleOrDefaultAsync(x => 
+        public async Task<(bool isRegistered, Guid userId, bool isActive)> IsRegistered(string email, string username)
+        {
+            var isExistingUser = await _happyNoodlesContext.Users.SingleOrDefaultAsync(x =>
                 x.Email.Equals(email) && x.Username.Equals(username));
-
+            var defaultActiveStatus = true;
             if (isExistingUser == null)
             {
-                var newUser = new User{
+                var newUser = new User
+                {
                     Email = email,
-                    Username = username
+                    Username = username,
+                    Active = true
+
                 };
                 _happyNoodlesContext.Users.Add(newUser);
 
                 await _happyNoodlesContext.SaveChangesAsync();
-                return (false, newUser.Id);
+                return (false, newUser.Id, defaultActiveStatus);
             }
 
-            if(string.IsNullOrEmpty(isExistingUser.Address) && string.IsNullOrEmpty(isExistingUser.PhoneNumber))
+            if (string.IsNullOrEmpty(isExistingUser.Address) && string.IsNullOrEmpty(isExistingUser.PhoneNumber))
             {
-                return (false, isExistingUser.Id);
+                return (false, isExistingUser.Id, isExistingUser.Active);
             }
 
-            return (true,isExistingUser.Id);
+            return (true, isExistingUser.Id, isExistingUser.Active);
 
         }
     }

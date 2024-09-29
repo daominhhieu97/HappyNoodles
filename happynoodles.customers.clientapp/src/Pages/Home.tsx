@@ -68,7 +68,7 @@ export const Home: React.FC = () => {
        
     }, [user]);
 
-    if (!userState.isAuthenticated) {
+    if (!userState.isAuthenticated || !user?.active) {
         return (<div>
             <p>Welcome to Happy Noodles</p>
             <GoogleLoginButton />

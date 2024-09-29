@@ -1,11 +1,11 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using HappyNoodles.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -23,12 +23,14 @@ public class LoginController : ControllerBase
     }
 
     [Route("signin")]
-    public async Task SignIn() {
-        await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, new AuthenticationProperties{
+    public async Task SignIn()
+    {
+        await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, new AuthenticationProperties
+        {
             RedirectUri = Url.Action("googleresponse")
         });
     }
-    
+
     [HttpGet("google-response")]
     public async Task<IActionResult> GoogleResponse()
     {
@@ -37,11 +39,11 @@ public class LoginController : ControllerBase
             return Unauthorized();
 
         var claims = authenticateResult?.Principal?.Identities?.FirstOrDefault()?.Claims;
-        if(claims == null)
+        if (claims == null)
         {
             return Unauthorized();
         }
-        
+
         var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? string.Empty;
         var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? string.Empty;
 
@@ -63,8 +65,8 @@ public class LoginController : ControllerBase
         var token = tokenHandler.CreateToken(tokenDescriptor);
         var tokenString = tokenHandler.WriteToken(token);
 
-        var IsRegistered = await _loginService.IsRegistered(email, name);
+        var IsRegisteredResult = await _loginService.IsRegistered(email, name);
 
-        return Redirect($"{_appConfig.FrontEndUrl}/?token={tokenString}&isRegistered={IsRegistered.isRegistered.ToString().ToLowerInvariant()}&userId={IsRegistered.userId}");
+        return Redirect($"{_appConfig.FrontEndUrl}/?token={tokenString}&isRegistered={IsRegisteredResult.isRegistered.ToString().ToLowerInvariant()}&userId={IsRegisteredResult.userId}&isActive={IsRegisteredResult.isActive.ToString().ToLowerInvariant()}");
     }
 }

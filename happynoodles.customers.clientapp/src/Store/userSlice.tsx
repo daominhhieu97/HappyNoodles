@@ -44,13 +44,10 @@ const userSlice = createSlice({
                 id : ''
             };
             state.token = '';
-        },
-        initUserDetails(state, action: PayloadAction<UserDto>) {
-            state.user.active = action.payload.active
-        },
+        }
     }
 });
 
-export const { login, logout, initUserDetails } = userSlice.actions;
+export const { login, logout } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -1,2 +1,5 @@
 /bin/
 /obj/
+.vs/
+happynoodles.customers.clientapp/.vscode/
+HappyNoodles.Customers.WebApi/HappyNoodles.Customers.WebApi.csproj.user
