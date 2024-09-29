@@ -5,6 +5,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './store/store.tsx';
 import { Provider } from 'react-redux';
 import Register from './pages/Register.tsx';
+import Inactive from './pages/Inactive.tsx';
 
 export default function App() {
     return (
@@ -14,6 +15,7 @@ export default function App() {
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="/inactive" element={<Inactive />} />
                     </Routes>
                 </BrowserRouter>
             </PersistGate>

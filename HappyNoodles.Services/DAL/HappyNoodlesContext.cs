@@ -17,6 +17,7 @@ public class HappyNoodlesContext : DbContext
             entity.HasKey(u => u.Id);
             entity.Property(x => x.Id).ValueGeneratedOnAdd();
             entity.Property(u => u.Email).IsRequired();
+            entity.Property(u => u.Active).HasDefaultValue(true);
         });
 
         base.OnModelCreating(modelBuilder);

@@ -1,5 +1,6 @@
 // features/user/userSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import UserDto from '../models/user';
 
 interface UserState {
     token: string;
@@ -11,13 +12,14 @@ interface User {
     email: string;
     name : string;
     id: string;
+    active?: boolean;
 }
 
 const initialState: UserState = {
     user : {
         email: '',
         name: '',
-        id : ''
+        id : '',
     },
     isAuthenticated: false,
     token: ''

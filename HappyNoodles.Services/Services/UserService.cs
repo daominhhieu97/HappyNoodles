@@ -25,6 +25,20 @@ namespace HappyNoodles.Services.Services
             return dto;
         }
 
+        public async Task InactiveUser(Guid userId)
+        {
+            var user = await _happyNoodlesContext.Users.SingleOrDefaultAsync(x => x.Id == userId);
+
+            if (user == null)
+            {
+                throw new Exception($"User {userId} does not exist");
+            }
+
+            user.Active = false;
+
+            await _happyNoodlesContext.SaveChangesAsync();
+        }
+
         public async Task Register(RegisterUserRequest request)
         {
             var user = await _happyNoodlesContext.Users.SingleOrDefaultAsync(x => x.Id == request.Id);
