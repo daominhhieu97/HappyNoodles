@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/userSlice.tsx";
 import { useNavigate } from "react-router-dom";
+import Button from "@mui/material/Button";
 
 export const Logout: React.FC = () => {
     const dispatch = useDispatch();
@@ -15,7 +16,7 @@ export const Logout: React.FC = () => {
     }
 
     return (
-        <button onClick={handleLogOut}>Log out</button>
+        <Button sx={{ mt: 2 }} onClick={handleLogOut} color='error'>Logout</Button>
     );
 }
 export default Logout;

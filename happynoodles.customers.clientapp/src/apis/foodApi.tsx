@@ -1,9 +1,10 @@
 import axiosInstance from "./baseApi.tsx";
 
+const baseUrl = 'items'
 
-const fetchFoods = async () => {
-  const response = await axiosInstance.get('/food/foods');
+const getItems = async () => {
+  const response = await axiosInstance.get(baseUrl);
     return response.data; // Assuming the API returns JSON data
 };
 
-export default fetchFoods;
+export default getItems;
