@@ -1,8 +1,8 @@
 ﻿namespace HappyNoodles.DTOs
 {
-    public class GetItemDto
+    public class GetIMenuDto
     {
-        public MenuDto MyProperty { get; set; }
+        public MenuDto Menu { get; set; }
     }
 
     public class MenuDto

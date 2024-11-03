@@ -1,5 +1,6 @@
 using AutoMapper;
-using HappyNoodles.Models;
+using HappyNoodles.Models.Dtos;
+using HappyNoodles.Models.Entities;
 
 public class UserProfile : Profile
 {

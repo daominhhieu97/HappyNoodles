@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store.tsx';
 import GoogleLoginButton from '../components/GoogleLoginButton.tsx';
-import getItems from '../apis/foodApi.tsx';
 import Logout from '../components/logout.tsx';
 import { AppBar, Avatar, Box, Button, Collapse, IconButton, MenuItem, Select, Toolbar, Typography } from '@mui/material';
 import CommonModal from '../components/commonModal.tsx';
@@ -10,22 +9,32 @@ import UserDto from '../models/user.tsx';
 import { getUserDetails, inactiveUser, updateUserDetails } from '../apis/userApi.tsx';
 import EditableTextField from '../components/editableTextField.tsx';
 import { toast } from 'react-toastify';
+import getAllMenus from '../apis/menuApi.tsx';
 
 
 export const Home: React.FC = () => {
     const userState = useSelector((state: RootState) => state.user);
-    const [foods, setItems] = useState<string>('');
     const [user, setUser] = useState<UserDto>();
     const [doUserInfoModalOpen, setUserInfoModalOpen] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [address, setAddress] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [menus, setMenus] = useState<MenuDto[]>([]);
+    const [openCategory, setOpenCategory] = useState<string | null>(null);
+    const [selectedItem, setSelectedItem] = useState<ItemDto | null>(null);
+
+    const handleCategoryClick = (categoryId: string) => {
+        setOpenCategory(openCategory === categoryId ? null : categoryId);
+      };
+    
+      const handleItemClick = (item: ItemDto) => {
+        setSelectedItem(item);
+      };
 
     const handleUserInfoModalClose = () => setUserInfoModalOpen(false);
 
-    const fetchItems = async () => {
-        const items = await getItems();
-        setItems(items);
+    const getMenus = async () => {
+        const menus = await getAllMenus();
+        setMenus(menus);
     };
 
     const handleSave = async () => {
@@ -52,7 +61,7 @@ export const Home: React.FC = () => {
     useEffect(() => {
         const initState = async () => {
             if (userState.isAuthenticated === true) {
-                fetchItems();
+                getMenus();
                 setUser(await getUserDetails(userState.user.id))
                 setPhoneNumber(user?.phoneNumber || '')
                 setAddress(user?.address || '')
@@ -89,45 +98,6 @@ export const Home: React.FC = () => {
             .join('');
     }
 
-    const categories = [
-        {
-            name: "Fruits",
-            subcategories: [
-                { name: "Apples" },
-                { name: "Bananas" },
-                { name: "Oranges" },
-            ],
-        },
-        {
-            name: "Vegetables",
-            subcategories: [
-                { name: "Carrots" },
-                { name: "Broccoli" },
-                { name: "Spinach" },
-            ],
-        },
-        {
-            name: "Dairy",
-            subcategories: [
-                { name: "Milk" },
-                { name: "Cheese" },
-                { name: "Yogurt" },
-            ],
-        },
-    ];
-
-    const [openCategory, setOpenCategory] = useState<string | null>(null);
-    const [selectedItem, setSelectedItem] = useState<string | null>(null);
-
-    const handleCategoryClick = (categoryName: string) => {
-        setOpenCategory(openCategory === categoryName ? null : categoryName);
-    };
-
-    const handleItemClick = (itemName: string) => {
-        setSelectedItem(itemName);
-        console.log(`Selected: ${itemName}`); // Or perform any action you need
-    };
-
     return (!isValidLogin() ? renderLogin() :
         <div>
             <div>
@@ -163,32 +133,43 @@ export const Home: React.FC = () => {
                     <Logout />
                 </CommonModal>
                 <Box sx={{ border: '1px solid #ccc', marginTop: '16px', padding: '16px', borderRadius: '8px' }}>
-                    <Typography variant="h6">Menu</Typography>
-                    {categories.map((category) => (
-                        <div key={category.name}>
-                            <Button
-                                onClick={() => handleCategoryClick(category.name)}
-                                variant="outlined"
-                                sx={{ marginTop: '8px', justifyContent: 'flex-start', width: '100%' }}
-                            >
-                                {category.name}
-                            </Button>
-                            <Collapse in={openCategory === category.name}>
-                                {category.subcategories.map((sub) => (
-                                    <Button
-                                        key={sub.name}
-                                        onClick={() => handleItemClick(sub.name)}
-                                        variant="text"
-                                        sx={{ marginLeft: '16px', justifyContent: 'flex-start', width: '100%' }}
-                                    >
-                                        {sub.name}
-                                    </Button>
-                                ))}
-                            </Collapse>
-                        </div>
-                    ))}
-                    {selectedItem && <Typography variant="subtitle1" sx={{ marginTop: '16px' }}>You selected: {selectedItem}</Typography>}
-                </Box>
+      {menus.map((menu) => (
+        <div key={menu.id}>
+          <Typography variant="h6">{menu.name}</Typography>
+          {menu.categories.map((category) => (
+            <div key={category.id}>
+              <Button
+                onClick={() => handleCategoryClick(category.id)}
+                variant="outlined"
+                sx={{ marginTop: '8px', justifyContent: 'flex-start', width: '100%' }}
+              >
+                {category.name}
+              </Button>
+              <Collapse in={openCategory === category.id}>
+                {category.items.map((item) => (
+                  <Button
+                    key={item.id}
+                    onClick={() => handleItemClick(item)}
+                    variant="text"
+                    sx={{ marginLeft: '16px', justifyContent: 'flex-start', width: '100%' }}
+                  >
+                    {item.name} - ${item.price.toFixed(2)}
+                  </Button>
+                ))}
+              </Collapse>
+            </div>
+          ))}
+        </div>
+      ))}
+      {selectedItem && (
+        <Box sx={{ marginTop: '16px' }}>
+          <Typography variant="subtitle1">Selected Item: {selectedItem.name}</Typography>
+          <Typography variant="body2">Price: {selectedItem.price.toFixed(2)}</Typography>
+          <Typography variant="body2">Description: {selectedItem.description}</Typography>
+          <Typography variant="body2">Remaining: {selectedItem.remainingItem}</Typography>
+        </Box>
+      )}
+    </Box>
             </div>
         </div>
     );

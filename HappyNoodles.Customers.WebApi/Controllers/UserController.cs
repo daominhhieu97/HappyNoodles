@@ -1,5 +1,4 @@
-
-using HappyNoodles.DTOs;
+using HappyNoodles.Models.Dtos;
 using HappyNoodles.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -41,15 +40,16 @@ namespace HappyNoodles.Customers.WebApi.Controllers
         [HttpPatch("details")]
         public async Task<IActionResult> UpdateUserDetails([FromBody] UpdateUserDetailsRequest request)
         {
-            try{
+            try
+            {
                 await userService.UpdateUserDetails(request);
                 return Ok();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex);
             }
-            
+
         }
 
         [HttpPatch("{userId}/inactive")]

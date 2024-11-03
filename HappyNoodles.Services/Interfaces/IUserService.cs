@@ -1,4 +1,4 @@
-using HappyNoodles.DTOs;
+using HappyNoodles.Models.Dtos;
 
 namespace HappyNoodles.Services.Interfaces
 {

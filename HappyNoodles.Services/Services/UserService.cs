@@ -1,5 +1,5 @@
 using AutoMapper;
-using HappyNoodles.DTOs;
+using HappyNoodles.Models.Dtos;
 using HappyNoodles.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +11,7 @@ namespace HappyNoodles.Services.Services
         private readonly IMapper _mapper;
 
         public UserService(
-            HappyNoodlesContext happyNoodlesContext, 
+            HappyNoodlesContext happyNoodlesContext,
             IMapper mapper)
         {
             _happyNoodlesContext = happyNoodlesContext;

@@ -22,7 +22,7 @@ public class LoginController : ControllerBase
         _loginService = loginService;
     }
 
-    [Route("signin")]
+    [HttpGet("signin")]
     public async Task SignIn()
     {
         await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, new AuthenticationProperties
