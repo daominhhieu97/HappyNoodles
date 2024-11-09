@@ -1,4 +1,4 @@
-using HappyNoodles.Models;
+using HappyNoodles.Models.Entities;
 using HappyNoodles.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

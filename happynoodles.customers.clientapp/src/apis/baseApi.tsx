@@ -26,7 +26,6 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-      debugger
       toast.error(`${error.response.data}`);
       return Promise.reject(error);
   }

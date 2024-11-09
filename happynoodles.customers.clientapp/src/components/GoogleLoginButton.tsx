@@ -37,6 +37,7 @@ const GoogleLoginButton: React.FC = () => {
 
         if (token) {
             handleLoginResponse(token, userId);
+            
             if (!isActive)
             {
                 navigate('/inactive')

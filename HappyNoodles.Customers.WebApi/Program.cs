@@ -1,4 +1,3 @@
-using System.Text;
 using HappyNoodles.Services.Interfaces;
 using HappyNoodles.Services.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -6,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var configurations = builder.Configuration;
@@ -13,27 +13,29 @@ var configurations = builder.Configuration;
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddAuthentication(options => {
+builder.Services.AddAuthentication(options =>
+{
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
 })
 .AddCookie()
-.AddGoogle(GoogleDefaults.AuthenticationScheme, options => {
+.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+{
     options.ClientId = configurations.GetSection("GoogleKeys:ClientId").Value;
     options.ClientSecret = configurations.GetSection("GoogleKeys:ClientSecret").Value;
 }).AddJwtBearer(options =>
     {
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = configurations["Jwt:Issuer"],
-        ValidAudience = configurations["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configurations["Jwt:SecretKey"]))
-    };
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = configurations["Jwt:Issuer"],
+            ValidAudience = configurations["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configurations["Jwt:SecretKey"]))
+        };
     });
 builder.Services.AddControllers();
 builder.Services.AddSingleton<AppConfig>();
@@ -48,21 +50,15 @@ builder.Services.AddCors(options =>
                 });
         });
 builder.Services.AddDbContext<HappyNoodlesContext>(options =>
-        options.UseNpgsql(configurations["DatabaseConnection:ConnectionString"]));
+        options.UseNpgsql(configurations["DatabaseConnection:ConnectionString"]), ServiceLifetime.Scoped);
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddAutoMapper(configurations => {
+builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddAutoMapper(configurations =>
+{
     configurations.AddMaps(typeof(UserProfile).Assembly);
 });
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
 app.UseHttpsRedirection();
 app.UseCors("AllowAnyOriginPolicy");
 
