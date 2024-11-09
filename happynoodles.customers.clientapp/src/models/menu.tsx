@@ -1,4 +1,4 @@
-interface CategoryDto {
+export interface CategoryDto {
     id: string;
     name: string;
     items: ItemDto[];
