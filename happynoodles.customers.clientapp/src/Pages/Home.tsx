@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store/store.tsx';
 import GoogleLoginButton from '../components/GoogleLoginButton.tsx';
 import Logout from '../components/logout.tsx';
-import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography, Tabs, Tab, List, ListItem, ListItemText, Paper, Grid, Container, Card, CardContent, ListItemButton, createTheme } from '@mui/material';
+import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography, Tabs, Tab, List, ListItemText, Paper, Grid, Container, Card, CardContent, ListItemButton, createTheme } from '@mui/material';
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import FacebookIcon from '@mui/icons-material/Facebook';

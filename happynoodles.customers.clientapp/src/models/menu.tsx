@@ -16,7 +16,7 @@ interface CategoryDto {
     price: number;
     description: string;
     remainingItem: number;
-    availableStatus: 'InStock' | 'OutOfStock';
+    availableStatus: 1 | 2; // 1 for in stock, 2 for out of stock
     pictureUrl?: string;
   }
 
