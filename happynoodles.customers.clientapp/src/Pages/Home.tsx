@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store/store.tsx';
 import GoogleLoginButton from '../components/GoogleLoginButton.tsx';
 import Logout from '../components/logout.tsx';
-import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography, Tabs, Tab, List, ListItem, ListItemText, Paper, Grid, Container, Card, CardContent, ListItemButton } from '@mui/material';
+import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography, Tabs, Tab, List, ListItem, ListItemText, Paper, Grid, Container, Card, CardContent, ListItemButton, createTheme } from '@mui/material';
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -16,25 +16,26 @@ import EditableTextField from '../components/editableTextField.tsx';
 import { toast } from 'react-toastify';
 import getAllMenus from '../apis/menuApi.tsx';
 import MenuDto from '../models/menu.tsx';
+import ItemSection from '../components/itemSection.tsx';
 
-const theme = {
-  palette: {
-    primary: {
-      main: '#8B4513',
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: '#8B4513',
+        },
+        secondary: {
+            main: '#D2691E',
+            light: '#DEB887',
+        },
+        background: {
+            default: '#FFF8DC',
+            paper: '#FAEBD7',
+        },
     },
-    secondary: {
-      main: '#D2691E',
-      light: '#DEB887',
+    typography: {
+        fontFamily: 'Playfair Display, serif',
     },
-    background: {
-      default: '#FFF8DC',
-      paper: '#FAEBD7',
-    },
-  },
-  typography: {
-    fontFamily: 'Playfair Display, serif',
-  },
-};
+});
 
 export const Home: React.FC = () => {
     const userState = useSelector((state: RootState) => state.user);
@@ -123,6 +124,11 @@ export const Home: React.FC = () => {
             .join('');
     }
 
+    const handleOrderItem = (itemId: string) => {
+        // Implement your order logic here
+        console.log(`Ordering item with id: ${itemId}`);
+    };
+
     return (!isValidLogin() ? renderLogin() :
         <Box sx={{ backgroundColor: theme.palette.background.default, minHeight: '100vh', fontFamily: theme.typography.fontFamily }}>
             <AppBar position="static" sx={{ backgroundColor: theme.palette.primary.main }}>
@@ -159,34 +165,34 @@ export const Home: React.FC = () => {
             </CommonModal>
 
             <Box sx={{ mb: 4 }}>
-            <div style={{ width: '100%' }}>
-  <Carousel showThumbs={false} infiniteLoop autoPlay>
-    <div>
-      <img 
-        src="https://images.unsplash.com/photo-1552611052-33e04de081de" 
-        alt="Happy Noodles Dish 1" 
-        style={{ width: '100%', height: '500px', objectFit: 'cover' }}
-      />
-      <p className="legend">Signature Ramen Bowl</p>
-    </div>
-    <div>
-      <img 
-        src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624" 
-        alt="Happy Noodles Dish 2" 
-        style={{ width: '100%', height: '500px', objectFit: 'cover' }}
-      />
-      <p className="legend">Spicy Udon Stir-Fry</p>
-    </div>
-    <div>
-      <img 
-        src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4" 
-        alt="Happy Noodles Ambiance" 
-        style={{ width: '100%', height: '500px', objectFit: 'cover' }}
-      />
-      <p className="legend">Our Cozy Restaurant</p>
-    </div>
-  </Carousel>
-</div>
+                <div style={{ width: '100%' }}>
+                    <Carousel showThumbs={false} infiniteLoop autoPlay>
+                        <div>
+                            <img
+                                src="https://images.unsplash.com/photo-1552611052-33e04de081de"
+                                alt="Happy Noodles Dish 1"
+                                style={{ width: '100%', height: '500px', objectFit: 'cover' }}
+                            />
+                            <p className="legend">Signature Ramen Bowl</p>
+                        </div>
+                        <div>
+                            <img
+                                src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624"
+                                alt="Happy Noodles Dish 2"
+                                style={{ width: '100%', height: '500px', objectFit: 'cover' }}
+                            />
+                            <p className="legend">Spicy Udon Stir-Fry</p>
+                        </div>
+                        <div>
+                            <img
+                                src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4"
+                                alt="Happy Noodles Ambiance"
+                                style={{ width: '100%', height: '500px', objectFit: 'cover' }}
+                            />
+                            <p className="legend">Our Cozy Restaurant</p>
+                        </div>
+                    </Carousel>
+                </div>
             </Box>
 
             <Container maxWidth="md" sx={{ mb: 4 }}>
@@ -194,9 +200,9 @@ export const Home: React.FC = () => {
                     Our Mission
                 </Typography>
                 <Typography variant="body1" align="center" sx={{ mb: 4 }}>
-                    At Happy Noodles, we strive to bring joy and comfort through our delicious noodle dishes, 
-                    crafted with love and the finest ingredients. Our goal is to create a warm, welcoming 
-                    atmosphere where every customer feels at home and experiences the rich flavors of our 
+                    At Happy Noodles, we strive to bring joy and comfort through our delicious noodle dishes,
+                    crafted with love and the finest ingredients. Our goal is to create a warm, welcoming
+                    atmosphere where every customer feels at home and experiences the rich flavors of our
                     authentic recipes.
                 </Typography>
             </Container>
@@ -220,54 +226,34 @@ export const Home: React.FC = () => {
                         <List>
                             {menus.find(menu => menu.id === selectedMenu)?.categories.map((category) => (
                                 <ListItemButton
-                                key={category.id} 
-                                onClick={() => handleCategoryClick(category.id)}
-                                selected={selectedCategory === category.id}
-                                sx={{ 
-                                    '&.Mui-selected': { 
-                                        backgroundColor: theme.palette.secondary.main,
-                                        color: '#FFF',
-                                        '&:hover': {
+                                    key={category.id}
+                                    onClick={() => handleCategoryClick(category.id)}
+                                    selected={selectedCategory === category.id}
+                                    sx={{
+                                        '&.Mui-selected': {
                                             backgroundColor: theme.palette.secondary.main,
+                                            color: '#FFF',
+                                            '&:hover': {
+                                                backgroundColor: theme.palette.secondary.main,
+                                            },
                                         },
-                                    },
-                                    '&:hover': {
-                                        backgroundColor: theme.palette.secondary.light,
-                                    },
-                                }}
-                            >
-                                <ListItemText primary={category.name} />
-                            </ListItemButton>
+                                        '&:hover': {
+                                            backgroundColor: theme.palette.secondary.light,
+                                        },
+                                    }}
+                                >
+                                    <ListItemText primary={category.name} />
+                                </ListItemButton>
                             ))}
                         </List>
                     </Paper>
                 </Grid>
-                <Grid item xs={12} md={9}>
-                    <Paper elevation={3} sx={{ padding: '16px', backgroundColor: theme.palette.background.paper }}>
-                        <Typography variant="h6" sx={{ mb: 2, color: theme.palette.primary.main }}>Items</Typography>
-                        <List>
-                            {menus.find(menu => menu.id === selectedMenu)?.categories
-                                .find(category => category.id === selectedCategory)?.items
-                                .map((item) => (
-                                    <ListItem key={item.id}>
-                                        <ListItemText
-                                            primary={item.name}
-                                            secondary={
-                                                <>
-                                                    <Typography component="span" variant="body2" color="text.primary">
-                                                        ${item.price.toFixed(2)}
-                                                    </Typography>
-                                                    {` — ${item.description}`}
-                                                    <br />
-                                                    {`Remaining: ${item.remainingItem}`}
-                                                </>
-                                            }
-                                        />
-                                    </ListItem>
-                                ))}
-                        </List>
-                    </Paper>
-                </Grid>
+                <ItemSection
+                    items={menus.find(menu => menu.id === selectedMenu)?.categories
+                        .find(category => category.id === selectedCategory)?.items || []}
+                    theme={theme}
+                    onOrderItem={handleOrderItem}
+                />
             </Grid>
 
             <Container maxWidth="md" sx={{ my: 4 }}>

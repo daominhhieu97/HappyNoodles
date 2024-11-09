@@ -10,10 +10,14 @@ interface CategoryDto {
     categories: CategoryDto[];
   }
 
-  interface ItemDto {
+  export interface ItemDto {
     id: string;
     name: string;
     price: number;
     description: string;
     remainingItem: number;
+    availableStatus: 'InStock' | 'OutOfStock';
+    pictureUrl?: string;
   }
+
+  export default MenuDto;
