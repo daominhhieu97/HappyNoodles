@@ -54,10 +54,13 @@ builder.Services.AddDbContext<HappyNoodlesContext>(options =>
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddScoped<IItemService, ItemService>();
+
 builder.Services.AddAutoMapper(configurations =>
 {
     configurations.AddMaps(typeof(UserProfile).Assembly);
 });
+
 var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseCors("AllowAnyOriginPolicy");

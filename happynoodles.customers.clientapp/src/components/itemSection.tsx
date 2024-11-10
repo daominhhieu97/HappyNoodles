@@ -5,6 +5,7 @@ import { ItemDto } from '../models/menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import { useNavigate } from 'react-router-dom';
 
 interface ItemSectionProps {
     items: ItemDto[];
@@ -20,13 +21,15 @@ const defaultPictureUrl = 'https://images.unsplash.com/photo-1546069901-ba9599a7
 
 const ItemSection: React.FC<ItemSectionProps> = ({ items, theme, onOrderItem }) => {
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+    const navigate = useNavigate();
+
+    const handleItemClick = (itemId: string) => {
+        navigate(`/product/${itemId}`);
+    };
 
     return (
         <Grid item xs={12} md={9}>
             <Paper elevation={3} sx={{ padding: '16px', backgroundColor: theme.palette.background.paper }}>
-                <Typography variant="h4" sx={{ mb: 3, color: theme.palette.primary.main, fontFamily: theme.typography.fontFamily, textAlign: 'center' }}>
-                    🍜 Delicious Noodles Await! 🍜
-                </Typography>
                 <Grid container spacing={3}>
                     {items.map((item) => (
                         <Grid item xs={12} sm={6} md={4} key={item.id}>
@@ -40,10 +43,12 @@ const ItemSection: React.FC<ItemSectionProps> = ({ items, theme, onOrderItem }) 
                                         '&:hover': {
                                             transform: 'scale(1.05)',
                                             boxShadow: '0 4px 20px 0 rgba(0,0,0,0.12)'
-                                        }
+                                        },
+                                        cursor: 'pointer'
                                     }}
                                     onMouseEnter={() => setHoveredItem(item.id)}
                                     onMouseLeave={() => setHoveredItem(null)}
+                                    onClick={() => handleItemClick(item.id)}
                                 >
                                     <CardMedia
                                         component="img"
@@ -75,10 +80,10 @@ const ItemSection: React.FC<ItemSectionProps> = ({ items, theme, onOrderItem }) 
                                             </Typography>
                                             <Fade in={hoveredItem === item.id}>
                                                 <Box>
-                                                    <IconButton size="small" color="primary">
+                                                    <IconButton size="small" color="primary" onClick={(e) => { e.stopPropagation(); /* Add to favorites logic */ }}>
                                                         <FavoriteIcon />
                                                     </IconButton>
-                                                    <IconButton size="small" color="secondary">
+                                                    <IconButton size="small" color="secondary" onClick={(e) => { e.stopPropagation(); /* Show offers logic */ }}>
                                                         <LocalOfferIcon />
                                                     </IconButton>
                                                 </Box>
@@ -97,7 +102,10 @@ const ItemSection: React.FC<ItemSectionProps> = ({ items, theme, onOrderItem }) 
                                                     },
                                                     fontFamily: theme.typography.fontFamily,
                                                 }}
-                                                onClick={() => onOrderItem(item.id)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onOrderItem(item.id);
+                                                }}
                                                 disabled={getAvailabilityStatus(item.availableStatus) === 'OutOfStock'}
                                             >
                                                 Add to Cart
