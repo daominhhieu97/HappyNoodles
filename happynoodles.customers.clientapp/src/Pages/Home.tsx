@@ -18,6 +18,8 @@ import UserDto from '../models/user.tsx';
 import MenuDto from '../models/menu.tsx';
 import Header from '../components/header.tsx';
 import GoogleLoginButton from '../components/GoogleLoginButton.tsx';
+import SpecialStickyButtons from '../components/specialStickyButtons.tsx';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const theme = createTheme({
   palette: {
@@ -37,6 +39,15 @@ const theme = createTheme({
     fontFamily: 'Playfair Display, serif',
   },
 });
+
+const stickyButtons = [
+  {
+    icon: <ShoppingCartIcon />,
+    label: 'cart',
+    path: '/order',
+  },
+  // Add more buttons here as needed
+];
 
 export const Home: React.FC = () => {
   const userState = useSelector((state: RootState) => state.user);
@@ -168,6 +179,7 @@ export const Home: React.FC = () => {
         <CustomerFeedback theme={theme} />
         <Footer theme={theme} />
       </Box>
+      <SpecialStickyButtons buttons={stickyButtons} />
     </ThemeProvider>
   );
 };
