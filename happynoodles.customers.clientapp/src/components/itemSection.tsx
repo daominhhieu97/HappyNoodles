@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Grid, Paper, Typography, Button, Tooltip, Box, CardContent, Card, CardMedia, Zoom, Fade, IconButton } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import { ItemDto } from '../models/menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import { addToCart } from '../store/cartSlice.tsx';
 import ItemDetailsModal from '../pages/itemDetails.tsx';
 
 interface ItemSectionProps {
     items: ItemDto[];
     theme: Theme;
-    onOrderItem: (itemId: string) => void;
 }
 
 const getAvailabilityStatus = (status: 1 | 2): 'InStock' | 'OutOfStock' => {
@@ -19,16 +20,21 @@ const getAvailabilityStatus = (status: 1 | 2): 'InStock' | 'OutOfStock' => {
 
 const defaultPictureUrl = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c';
 
-const ItemSection: React.FC<ItemSectionProps> = ({ items, theme, onOrderItem }) => {
+const ItemSection: React.FC<ItemSectionProps> = ({ items, theme }) => {
+    const dispatch = useDispatch();
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
     const [selectedItem, setSelectedItem] = useState<ItemDto | null>(null);
-
+    debugger;
     const handleItemClick = (item: ItemDto) => {
         setSelectedItem(item);
     };
 
     const handleCloseModal = () => {
         setSelectedItem(null);
+    };
+
+    const handleAddToCart = (item: ItemDto) => {
+        dispatch(addToCart({ ...item, quantity: 1 }));
     };
 
     return (
@@ -112,7 +118,7 @@ const ItemSection: React.FC<ItemSectionProps> = ({ items, theme, onOrderItem }) 
                                                     }}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        onOrderItem(item.id);
+                                                        handleAddToCart(item);
                                                     }}
                                                     disabled={getAvailabilityStatus(item.availableStatus) === 'OutOfStock'}
                                                 >
@@ -130,7 +136,7 @@ const ItemSection: React.FC<ItemSectionProps> = ({ items, theme, onOrderItem }) 
             <ItemDetailsModal
                 selectedItem={selectedItem}
                 onClose={handleCloseModal}
-                onOrderItem={onOrderItem}
+                onOrderItem={handleAddToCart}
                 theme={theme}
             />
         </>

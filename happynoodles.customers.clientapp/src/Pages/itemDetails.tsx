@@ -8,7 +8,7 @@ import CloseIcon from '@mui/icons-material/Close';
 interface ItemDetailsModalProps {
     selectedItem: ItemDto | null;
     onClose: () => void;
-    onOrderItem: (itemId: string) => void;
+    onOrderItem: (item: ItemDto) => void;
     theme: Theme;
 }
 
@@ -80,7 +80,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({ selectedItem, onClo
                             fullWidth
                             startIcon={<ShoppingCartIcon />}
                             sx={{ mt: 2 }}
-                            onClick={() => onOrderItem(selectedItem.id)}
+                            onClick={() => onOrderItem(selectedItem)}
                             disabled={getAvailabilityStatus(selectedItem.availableStatus) === 'OutOfStock'}
                         >
                             Add to Cart
