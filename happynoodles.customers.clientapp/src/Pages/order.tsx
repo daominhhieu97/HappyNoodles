@@ -7,6 +7,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { RootState } from '../store/store';
 import { addToCart, removeFromCart, clearCart } from '../store/cartSlice.tsx';
 import { ItemDto } from '../models/menu.tsx';
+import { toast } from 'react-toastify';
+import { saveOrder } from '../apis/orderApi.tsx';
+import OrderDto from '../models/order.tsx';
 
 const steps = ['Review Order', 'Delivery Details', 'Confirmation'];
 
@@ -65,11 +68,27 @@ const Order: React.FC = () => {
     return cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
-  const handleConfirmOrder = () => {
-    // Here you would typically send the order to your backend
-    console.log('Order confirmed', { cart, deliveryAddress, phoneNumber, orderCode });
-    dispatch(clearCart());
-    navigate('/');
+  const handleConfirmOrder = async () => {
+    try {
+      const orderData: OrderDto = {
+        deliveryAddress,
+        phoneNumber,
+        orderCode,
+        items: cart.items.map(item => ({
+          itemId: item.id,
+          quantity: item.quantity,
+          price: item.price
+        }))
+      };
+  
+      const result = await saveOrder(orderData);
+      dispatch(clearCart());
+      navigate('/');
+      toast('Your order has been placed successfully');
+    } catch (error) {
+      console.error('Error saving order', error);
+      toast('There was an error placing your order. Please try again.');
+    }
   };
 
   const renderOrderSummary = () => (
