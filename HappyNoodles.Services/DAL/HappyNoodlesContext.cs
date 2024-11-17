@@ -12,6 +12,8 @@ public class HappyNoodlesContext : DbContext
     public DbSet<Menu> Menus { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Item> Items { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,7 +38,8 @@ public class HappyNoodlesContext : DbContext
         });
 
         // Additional model configuration can go here
-
+        modelBuilder.ApplyConfiguration(new OrderConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
         base.OnModelCreating(modelBuilder);
     }
 }
