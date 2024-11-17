@@ -20,6 +20,7 @@ import Header from '../components/header.tsx';
 import GoogleLoginButton from '../components/GoogleLoginButton.tsx';
 import SpecialStickyButtons from '../components/specialStickyButtons.tsx';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import OrderHistory from './orderHistory.tsx';
 
 const theme = createTheme({
   palette: {
@@ -52,12 +53,23 @@ const stickyButtons = [
 export const Home: React.FC = () => {
   const userState = useSelector((state: RootState) => state.user);
   const [user, setUser] = useState<UserDto>();
-  const [doUserInfoModalOpen, setUserInfoModalOpen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [address, setAddress] = useState('');
   const [menus, setMenus] = useState<MenuDto[]>([]);
   const [selectedMenu, setSelectedMenu] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [showUserInfo, setShowUserInfo] = useState(false);
+  const [showOrderHistory, setShowOrderHistory] = useState(false);
+
+  const handleYourInfoClick = () => {
+    setShowUserInfo(true);
+    setShowOrderHistory(false);
+  };
+
+  const handleYourOrdersClick = () => {
+    setShowUserInfo(false);
+    setShowOrderHistory(true);
+  };
 
   const handleMenuChange = (event: React.SyntheticEvent, newValue: string) => {
     setSelectedMenu(newValue);
@@ -67,8 +79,6 @@ export const Home: React.FC = () => {
   const handleCategoryClick = (categoryId: string) => {
     setSelectedCategory(categoryId);
   };
-
-  const handleUserInfoModalClose = () => setUserInfoModalOpen(false);
 
   const getMenus = async () => {
     const menus = await getAllMenus();
@@ -85,7 +95,7 @@ export const Home: React.FC = () => {
         phoneNumber: phoneNumber,
         address: address
       })
-      handleUserInfoModalClose();
+      setShowUserInfo(false);
       toast('Your changes are saved')
     }
   };
@@ -93,7 +103,7 @@ export const Home: React.FC = () => {
   const inactiveCustomer = async () => {
     if (user) {
       await inactiveUser(user.id);
-      handleUserInfoModalClose();
+      setShowUserInfo(false);
       toast("Inactive successfully. You cannot use this account next time.");
     }
   }
@@ -140,11 +150,12 @@ export const Home: React.FC = () => {
         <Header 
           theme={theme}
           userName={userState.user.name}
-          onAvatarClick={() => setUserInfoModalOpen(true)}
+          onYourInfoClick={handleYourInfoClick}
+          onYourOrdersClick={handleYourOrdersClick}
         />
-        <UserInfoModal 
-          open={doUserInfoModalOpen}
-          handleClose={handleUserInfoModalClose}
+        {showUserInfo && (<UserInfoModal 
+          open={showUserInfo}
+          handleClose={() => setShowUserInfo(false)}
           userName={userState.user.name}
           userEmail={userState.user.email}
           phoneNumber={phoneNumber}
@@ -153,7 +164,8 @@ export const Home: React.FC = () => {
           setAddress={setAddress}
           handleSave={handleSave}
           inactiveCustomer={inactiveCustomer}
-        />
+        />)}
+        {showOrderHistory && <OrderHistory />}
         <CarouselSection />
         <MissionStatement theme={theme} />
         <MenuTabs 

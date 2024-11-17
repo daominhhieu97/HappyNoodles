@@ -1,4 +1,5 @@
 ﻿using HappyNoodles.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 public class OrderService : IOrderService
 {
@@ -19,6 +20,7 @@ public class OrderService : IOrderService
             OrderDate = DateTime.UtcNow,
             Items = orderDto.Items.Select(i => new OrderItem
             {
+                ItemId = i.ItemId!.Value,
                 Quantity = i.Quantity,
                 Price = i.Price
             }).ToList()
@@ -28,5 +30,20 @@ public class OrderService : IOrderService
         await _context.SaveChangesAsync();
 
         return orderDto;
+    }
+
+    public async Task<List<Order>> GetOrdersAsync()
+    {
+        return await _context.Orders
+            .Include(o => o.Items)
+            .ToListAsync();
+    }
+
+    public async Task<Order> GetOrderDetailsAsync(Guid id)
+    {
+        return await _context.Orders
+            .Include(o => o.Items)
+            .ThenInclude(x => x.Item)
+            .FirstOrDefaultAsync(o => o.Id == id);
     }
 }
