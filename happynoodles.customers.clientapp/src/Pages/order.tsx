@@ -6,9 +6,6 @@ import { Box, Typography, Stepper, Step, StepLabel, Button, Paper, Grid, TextFie
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { RootState } from '../store/store';
 import { addToCart, removeFromCart, clearCart } from '../store/cartSlice.tsx';
-import { ItemDetailsDto } from '../models/item';
-import Header from '../components/header.tsx';
-import Footer from '../components/footer.tsx';
 import { ItemDto } from '../models/menu.tsx';
 
 const steps = ['Review Order', 'Delivery Details', 'Confirmation'];
