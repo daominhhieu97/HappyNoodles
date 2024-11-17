@@ -173,7 +173,6 @@ export const Home: React.FC = () => {
             items={menus.find(menu => menu.id === selectedMenu)?.categories
               .find(category => category.id === selectedCategory)?.items || []}
             theme={theme}
-            onOrderItem={handleOrderItem}
           />
         </Grid>
         <CustomerFeedback theme={theme} />
