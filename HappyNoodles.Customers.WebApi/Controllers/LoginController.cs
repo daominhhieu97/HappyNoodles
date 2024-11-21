@@ -1,3 +1,4 @@
+using HappyNoodles.Models;
 using HappyNoodles.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;

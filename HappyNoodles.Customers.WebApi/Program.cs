@@ -1,5 +1,7 @@
+using HappyNoodles.Models;
 using HappyNoodles.Services.Interfaces;
 using HappyNoodles.Services.Services;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -44,18 +46,36 @@ builder.Services.AddCors(options =>
             options.AddPolicy("AllowAnyOriginPolicy",
                 builder =>
                 {
-                    builder.AllowAnyOrigin() // Allow requests from any origin
+                    builder.AllowAnyOrigin()
                            .AllowAnyHeader()
                            .AllowAnyMethod();
                 });
         });
 builder.Services.AddDbContext<HappyNoodlesContext>(options =>
         options.UseNpgsql(configurations["DatabaseConnection:ConnectionString"]), ServiceLifetime.Scoped);
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<OrderCreatedConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("host");
+            h.Password("host");
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
+
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ISmsService, SmsService>();
 
 builder.Services.AddAutoMapper(configurations =>
 {

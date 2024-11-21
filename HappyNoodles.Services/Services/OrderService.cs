@@ -1,13 +1,19 @@
 ﻿using HappyNoodles.Models.Entities;
+using HappyNoodles.Models.Messages;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
 public class OrderService : IOrderService
 {
     private readonly HappyNoodlesContext _context;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public OrderService(HappyNoodlesContext context)
+    public OrderService(
+        HappyNoodlesContext context, 
+        IPublishEndpoint publishEndpoint)
     {
         _context = context;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task<OrderDto> SaveOrderAsync(OrderDto orderDto)
@@ -28,6 +34,17 @@ public class OrderService : IOrderService
 
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
+
+        var totalAmount = order.Items.Sum(i => i.Price * i.Quantity);
+
+        await _publishEndpoint.Publish(new OrderCreated(
+            order.OrderCode,
+            order.Items.Select(i => new OrderItemDtoForEvent(i.ItemId, i.Quantity, i.Price)).ToList(),
+            totalAmount,
+            order.OrderDate,
+            order.DeliveryAddress,
+            order.PhoneNumber
+        ));
 
         return orderDto;
     }

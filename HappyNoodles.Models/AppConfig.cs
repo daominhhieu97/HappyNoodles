@@ -1,3 +1,7 @@
+using Microsoft.Extensions.Configuration;
+
+namespace HappyNoodles.Models;
+
 public class AppConfig(IConfiguration configuration)
 {
     public string JwtIssuer => _configuration["Jwt:Issuer"];
@@ -8,4 +12,9 @@ public class AppConfig(IConfiguration configuration)
     public string JwtSecretKey => _configuration["Jwt:SecretKey"];
     public string FrontEndUrl => _configuration["FrontEndUrl"];
     // Add more properties as needed
+    // Twilio settings
+    public string TwilioAccountSid => _configuration["Twilio:AccountSid"];
+    public string TwilioAuthToken => _configuration["Twilio:AuthToken"];
+    public string TwilioPhoneNumber => _configuration["Twilio:PhoneNumber"];
+    public string TwilioStoreKeeper => _configuration["Twilio:StoreKeeper"];
 }
