@@ -31,7 +31,6 @@ const SpecialStickyButtons: React.FC<SpecialStickyButtonsProps> = ({ buttons }) 
           color="primary"
           aria-label={button.label}
           onClick={() => {
-            debugger;
             navigate(button.path);}}
         >
           {button.icon}
