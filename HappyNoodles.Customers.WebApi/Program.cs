@@ -76,6 +76,9 @@ builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
+builder.Services.AddScoped<IIdempotencyService, IdempotencyService>();
+builder.Services.AddScoped<IMessageBusService, MessageBusService>();
+builder.Services.AddScoped<IJsonService, JsonService>();
 
 builder.Services.AddAutoMapper(configurations =>
 {

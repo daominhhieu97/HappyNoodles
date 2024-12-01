@@ -15,6 +15,9 @@ public class OrderCreatedConsumer : IConsumer<OrderCreated>
     {
         var message = context.Message;
 
+        if (message == null)
+            return;
+
         var smsMessage = $"New order received: {message.OrderCode}\n" +
             $"Total: ${message.TotalAmount:F2}\n" +
             $"Items: {message.Items.Count}\n" +

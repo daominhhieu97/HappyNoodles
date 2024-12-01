@@ -24,7 +24,7 @@ const ItemSection: React.FC<ItemSectionProps> = ({ items, theme }) => {
     const dispatch = useDispatch();
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
     const [selectedItem, setSelectedItem] = useState<ItemDto | null>(null);
-    debugger;
+    
     const handleItemClick = (item: ItemDto) => {
         setSelectedItem(item);
     };

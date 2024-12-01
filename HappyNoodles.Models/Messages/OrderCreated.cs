@@ -1,6 +1,6 @@
 ﻿namespace HappyNoodles.Models.Messages
 {
-    public class OrderCreated
+    public class OrderCreated : Message
     {
         public string OrderCode { get; init; }
         public List<OrderItemDtoForEvent> Items { get; init; }
@@ -18,6 +18,7 @@
             OrderDate = orderDate;
             DeliveryAddress = deliveryAddress;
             PhoneNumber = phoneNumber;
+            EventType = EventTypes.OrderCreated;
         }
     }
 
