@@ -3,5 +3,5 @@
 public interface IIdempotencyService
 {
     Task<bool> HasBeenProcessed(Guid eventId, string eventType);
-    Task MarkAsProcessed(Guid eventId, string eventType, object payload);
+    Task MarkAsProcessed(Guid eventId);
 }

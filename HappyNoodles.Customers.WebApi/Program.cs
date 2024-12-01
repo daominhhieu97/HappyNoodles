@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var configurations = builder.Configuration;
@@ -56,20 +57,40 @@ builder.Services.AddDbContext<HappyNoodlesContext>(options =>
 
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumer<OrderCreatedConsumer>();
+    x.AddConsumers(typeof(OrderCreatedConsumer).Assembly);
 
     x.UsingRabbitMq((context, cfg) =>
     {
+        ///TODO: using app configurations
         cfg.Host("localhost", "/", h =>
         {
             h.Username("host");
             h.Password("host");
         });
 
+        // Custom retry policy
+        cfg.UseMessageRetry(r =>
+        {
+            r.Incremental(3,
+                TimeSpan.FromSeconds(1),
+                TimeSpan.FromSeconds(2));
+        });
+
+        // Configure RabbitMQ retry
+        //cfg.UseDelayedRedelivery(r =>
+        //{
+        //    r.Intervals(
+        //        TimeSpan.FromMinutes(5),
+        //        TimeSpan.FromMinutes(15),
+        //        TimeSpan.FromMinutes(30)
+        //    );
+        //});
+
         cfg.ConfigureEndpoints(context);
     });
 });
 
+///TODO: using an extension method
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
@@ -79,11 +100,21 @@ builder.Services.AddScoped<ISmsService, SmsService>();
 builder.Services.AddScoped<IIdempotencyService, IdempotencyService>();
 builder.Services.AddScoped<IMessageBusService, MessageBusService>();
 builder.Services.AddScoped<IJsonService, JsonService>();
+builder.Services.AddScoped<IEventService, EventService>();
 
 builder.Services.AddAutoMapper(configurations =>
 {
     configurations.AddMaps(typeof(UserProfile).Assembly);
 });
+
+///TODO: Move settings to app configuration
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .MinimumLevel.Error()
+    .WriteTo.File("logs/error-.txt",
+        rollingInterval: RollingInterval.Day,
+        retainedFileTimeLimit: TimeSpan.FromDays(7),
+        fileSizeLimitBytes: 10 * 1024 * 1024,
+        rollOnFileSizeLimit: true));
 
 var app = builder.Build();
 app.UseHttpsRedirection();

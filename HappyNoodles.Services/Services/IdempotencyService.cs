@@ -1,5 +1,4 @@
-﻿using HappyNoodles.Models.Entities;
-using HappyNoodles.Services.Interfaces;
+﻿using HappyNoodles.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 public class IdempotencyService : IIdempotencyService
@@ -16,21 +15,19 @@ public class IdempotencyService : IIdempotencyService
     public async Task<bool> HasBeenProcessed(Guid eventId, string eventType)
     {
         return await _dbContext.Events
-            .AnyAsync(e => e.Id == eventId &&
-                          e.EventType == eventType);
+            .AnyAsync(e => e.Id == eventId 
+            && e.EventType == eventType
+            && e.IsProcessed);
     }
 
-    public async Task MarkAsProcessed(Guid eventId, string eventType, object payload)
+    public async Task MarkAsProcessed(Guid eventId)
     {
-        await _dbContext.Events.AddAsync(new Event
-        {
-            Id = eventId,
-            EventType = eventType,
-            Payload = _jsonService.Serialize(payload),
-            ProcessedAtUtc = DateTime.UtcNow,
-            CreatedTimeUtc = DateTime.UtcNow,
-            IsProcessed = true
-        });
+        var eventEntity = await _dbContext.Events
+            .FirstOrDefaultAsync(x => x.Id == eventId)
+            ?? throw new Exception("Cannot found any matched event");
+
+        eventEntity.ProcessedAtUtc = DateTime.UtcNow;
+        eventEntity.IsProcessed = true;
 
         await _dbContext.SaveChangesAsync();
     }
