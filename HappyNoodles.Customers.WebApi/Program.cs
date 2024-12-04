@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Serilog;
 using Quartz;
+using HappyNoodles.Services.Jobs;
 
 var builder = WebApplication.CreateBuilder(args);
 var configurations = builder.Configuration;
@@ -100,6 +101,22 @@ builder.Services.AddMassTransit(x =>
 builder.Services.AddQuartz(q =>
 {
     q.UseMicrosoftDependencyInjectionJobFactory();
+
+    var jobKey = JobKey.Create(nameof(WelcomeNewDayMessageRecurringJob));
+
+    q.AddJob<WelcomeNewDayMessageRecurringJob>(jobKey);
+    q.AddTrigger(t => t
+        .ForJob(jobKey)
+        .WithIdentity($"{nameof(WelcomeNewDayMessageRecurringJob)}-trigger")
+        .WithSimpleSchedule(s =>
+            s.WithIntervalInMinutes(1)
+             .RepeatForever())
+    );
+});
+
+builder.Services.AddQuartzHostedService(options =>
+{
+    options.WaitForJobsToComplete = true;
 });
 
 ///TODO: using an extension method
