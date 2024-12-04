@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Serilog;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 var configurations = builder.Configuration;
@@ -57,8 +58,12 @@ builder.Services.AddDbContext<HappyNoodlesContext>(options =>
 
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumers(typeof(OrderCreatedConsumer).Assembly);
+    x.AddPublishMessageScheduler();
+    x.AddQuartzConsumers();
 
+    x.AddConsumers(typeof(OrderCreatedConsumer).Assembly);
+    Uri schedulerEndpoint = new Uri("queue:scheduler");
+    x.AddMessageScheduler(schedulerEndpoint);
     x.UsingRabbitMq((context, cfg) =>
     {
         ///TODO: using app configurations
@@ -85,9 +90,16 @@ builder.Services.AddMassTransit(x =>
         //        TimeSpan.FromMinutes(30)
         //    );
         //});
+        cfg.UseMessageScheduler(schedulerEndpoint);
+        cfg.UsePublishMessageScheduler();
 
         cfg.ConfigureEndpoints(context);
     });
+});
+
+builder.Services.AddQuartz(q =>
+{
+    q.UseMicrosoftDependencyInjectionJobFactory();
 });
 
 ///TODO: using an extension method

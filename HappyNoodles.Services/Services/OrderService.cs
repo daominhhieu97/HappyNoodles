@@ -1,7 +1,6 @@
 ﻿using HappyNoodles.Models.Entities;
 using HappyNoodles.Models.Messages;
 using HappyNoodles.Services.Interfaces;
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
 public class OrderService : IOrderService
@@ -46,6 +45,7 @@ public class OrderService : IOrderService
             order.DeliveryAddress,
             order.PhoneNumber
         );
+        orderCreatedEvent.SendAtUtc = DateTime.UtcNow + TimeSpan.FromSeconds(15);
 
         await _messageBusService.PublishMessage(orderCreatedEvent);
 
