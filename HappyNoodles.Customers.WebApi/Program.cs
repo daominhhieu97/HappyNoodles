@@ -11,6 +11,8 @@ using System.Text;
 using Serilog;
 using Quartz;
 using HappyNoodles.Services.Jobs;
+using HappyNoodles.Models.Messages;
+using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 var configurations = builder.Configuration;
@@ -46,6 +48,7 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<AppConfig>();
 builder.Services.AddCors(options =>
         {
+            //TODO: Only allow requests from Frontend app
             options.AddPolicy("AllowAnyOriginPolicy",
                 builder =>
                 {
@@ -54,6 +57,7 @@ builder.Services.AddCors(options =>
                            .AllowAnyMethod();
                 });
         });
+
 builder.Services.AddDbContext<HappyNoodlesContext>(options =>
         options.UseNpgsql(configurations["DatabaseConnection:ConnectionString"]), ServiceLifetime.Scoped);
 
@@ -94,7 +98,41 @@ builder.Services.AddMassTransit(x =>
         cfg.UseMessageScheduler(schedulerEndpoint);
         cfg.UsePublishMessageScheduler();
 
+        cfg.ReceiveEndpoint("order-created-queue", e =>
+        {
+            e.ConfigureConsumeTopology = false; // Don't auto-bind exchanges
+            e.Bind("order.created.exchange", x =>
+            {
+                x.RoutingKey = "order.created"; // Define routing key
+            });
+            e.ConfigureConsumer<OrderCreatedConsumer>(context);
+        });
+
+        cfg.Message<OrderCreated>(x =>
+        {
+            x.SetEntityName("order.created.exchange"); // Define direct exchange name
+        });
         cfg.ConfigureEndpoints(context);
+
+        cfg.ReceiveEndpoint("owner-notification-queue", e =>
+        {
+            e.Bind("inventory.topic", x =>
+            {
+                x.ExchangeType = ExchangeType.Topic;
+                x.RoutingKey = "inventory.low";
+            });
+            e.ConfigureConsumer<OwnerNotificationConsumer>(context);
+        });
+
+        cfg.ReceiveEndpoint("partner-notification-queue", e =>
+        {
+            e.Bind("ecommerce.topic", x =>
+            {
+                x.ExchangeType = ExchangeType.Topic;
+                x.RoutingKey = "inventory.low";
+            });
+            e.ConfigureConsumer<PartnerNotificationConsumer>(context);
+        });
     });
 });
 
@@ -104,14 +142,14 @@ builder.Services.AddQuartz(q =>
 
     var jobKey = JobKey.Create(nameof(WelcomeNewDayMessageRecurringJob));
 
-    q.AddJob<WelcomeNewDayMessageRecurringJob>(jobKey);
-    q.AddTrigger(t => t
-        .ForJob(jobKey)
-        .WithIdentity($"{nameof(WelcomeNewDayMessageRecurringJob)}-trigger")
-        .WithSimpleSchedule(s =>
-            s.WithIntervalInMinutes(1)
-             .RepeatForever())
-    );
+    //q.AddJob<WelcomeNewDayMessageRecurringJob>(jobKey);
+    //q.AddTrigger(t => t
+    //    .ForJob(jobKey)
+    //    .WithIdentity($"{nameof(WelcomeNewDayMessageRecurringJob)}-trigger")
+    //    .WithSimpleSchedule(s =>
+    //        s.WithIntervalInMinutes(1)
+    //         .RepeatForever())
+    //);
 });
 
 builder.Services.AddQuartzHostedService(options =>
@@ -128,6 +166,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
 builder.Services.AddScoped<IIdempotencyService, IdempotencyService>();
 builder.Services.AddScoped<IMessageBusService, MessageBusService>();
+builder.Services.AddScoped<IRoutingKeyResolver, RabbitMqRoutingKeyResolver>();
 builder.Services.AddScoped<IJsonService, JsonService>();
 builder.Services.AddScoped<IEventService, EventService>();
 

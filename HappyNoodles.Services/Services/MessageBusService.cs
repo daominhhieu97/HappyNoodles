@@ -2,13 +2,13 @@
 using HappyNoodles.Services.Interfaces;
 using MassTransit;
 using Microsoft.Extensions.Logging;
-
 public class MessageBusService(
     IBus bus,
     IIdempotencyService idempotencyService,
     ILogger<MessageBusService> logger,
     IEventService eventService,
-    IMessageScheduler messageScheduler) : IMessageBusService
+    IMessageScheduler messageScheduler,
+    IRoutingKeyResolver routingKeyResolver) : IMessageBusService
 {
     public async Task PublishMessage<T>(T message) where T : Message
     {
@@ -24,28 +24,31 @@ public class MessageBusService(
         }
 
         var messageType = message.EventType;
-
         try
         {
-            ///TODO: When it will be duplicated?
             if (await idempotencyService.HasBeenProcessed(eventId.GetValueOrDefault(), messageType))
             {
                 return;
             }
+
+            var routingKey = routingKeyResolver.GetRoutingKey(message);
 
             if (message.SendAtUtc.HasValue)
             {
                 // Schedule message for future delivery
                 await messageScheduler.SchedulePublish(
                     message.SendAtUtc.Value,
-                     message);
+                    message);
             }
             else
             {
-                await bus.Publish(message, context => context.MessageId = eventId);
+                await bus.Publish(message, context =>
+                {
+                    context.MessageId = eventId;
+                    context.Headers.Set("routing-key", routingKey);
+                });
             }
 
-            ///TODO: Learn how to check the message processed successfully
             await idempotencyService.MarkAsProcessed(eventId.GetValueOrDefault());
         }
         catch (Exception ex)
