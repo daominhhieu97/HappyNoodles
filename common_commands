@@ -1,6 +1,11 @@
 ###EF Core commands
-Create Migration: dotnet ef migrations add 1_Init --startup-project ../HappyNoodles.Customers.WebApi
-UpdateDb: dotnet ef database update --startup-project ../HappyNoodles.Customers.WebApi
+Create Migration: 
+- VSC: dotnet ef migrations add 1_Init --startup-project ../HappyNoodles.Customers.WebApi
+- VS: Add-Migration AddEventEntity -StartupProject HappyNoodles.Customers.WebApi
+
+UpdateDb: 
+- VSC: dotnet ef database update --startup-project ../HappyNoodles.Customers.WebApi
+- VS: update-database -StartupProject HappyNoodles.Customers.WebApi
 
 .NET Solution
 New ClassLib proj: dotnet new classlib -n HappyNoodles.DTOs

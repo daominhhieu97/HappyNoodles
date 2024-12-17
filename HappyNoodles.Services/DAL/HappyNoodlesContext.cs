@@ -14,6 +14,7 @@ public class HappyNoodlesContext : DbContext
     public DbSet<Item> Items { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Event> Events { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,6 +36,12 @@ public class HappyNoodlesContext : DbContext
                   .WithMany(c => c.Items)
                   .HasForeignKey(i => i.CategoryId)
                   .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Event>(entity =>
+        {
+            entity.HasKey(i => i.Id);
+            entity.Property(i => i.Id).ValueGeneratedNever();
         });
 
         // Additional model configuration can go here
