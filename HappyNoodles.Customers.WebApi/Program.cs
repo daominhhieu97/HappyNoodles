@@ -71,11 +71,13 @@ builder.Services.AddMassTransit(x =>
     x.AddMessageScheduler(schedulerEndpoint);
     x.UsingRabbitMq((context, cfg) =>
     {
+        var appConfig = context.GetRequiredService<AppConfig>();
+
         ///TODO: using app configurations
-        cfg.Host("localhost", "/", h =>
+        cfg.Host(appConfig.RabbitMQHost, appConfig.RabbitMQVirtualHost, h =>
         {
-            h.Username("host");
-            h.Password("host");
+            h.Username(appConfig.RabbitMQUsername);
+            h.Password(appConfig.RabbitMQPassword);
         });
 
         // Custom retry policy

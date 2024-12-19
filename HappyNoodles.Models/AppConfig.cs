@@ -17,4 +17,8 @@ public class AppConfig(IConfiguration configuration)
     public string TwilioAuthToken => _configuration["Twilio:AuthToken"];
     public string TwilioPhoneNumber => _configuration["Twilio:PhoneNumber"];
     public string TwilioStoreKeeper => _configuration["Twilio:StoreKeeper"];
+    public string RabbitMQHost => _configuration["RabbitMQ:Host"];
+    public string RabbitMQUsername => _configuration["RabbitMQ:Username"];
+    public string RabbitMQPassword => _configuration["RabbitMQ:Password"];
+    public string RabbitMQVirtualHost => _configuration["RabbitMQ:VirtualHost"];
 }

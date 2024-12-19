@@ -1,0 +1,31 @@
+services:
+  webapi:
+    build:
+      context: .
+      dockerfile: ./HappyNoodles.Customers.WebApi/dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - rabbitmq
+
+  clientapp:
+    build:
+      context: ./happynoodles.customers.clientapp
+    ports:
+      - "3000:80"
+    depends_on:
+      - webapi
+    env_file:
+      - ./happynoodles.customers.clientapp/.env
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: host
+      RABBITMQ_DEFAULT_PASS: host
